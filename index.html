@@ -181,7 +181,7 @@ td.desc{font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;w
 .form-err{color:var(--neg);font-size:13px;margin:0}
 .drawer footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
 
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:9px;font-weight:500;opacity:0;transition:.2s;z-index:60;pointer-events:none;max-width:calc(100% - 32px)}
+.toast{z-index:90!important;position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:9px;font-weight:500;opacity:0;transition:.2s;z-index:60;pointer-events:none;max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* Logo: moeda + visto que sobe como seta */
@@ -312,7 +312,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
 .map-grid .btn{justify-self:start}
 .map-grid select,.imp-head select{padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);width:100%}
 .cat-sel{padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);max-width:180px}
-.modal-wrap{position:fixed;inset:0;z-index:55;background:rgba(10,14,24,.45);display:flex;align-items:center;justify-content:center;padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.modal-wrap{position:fixed;inset:0;z-index:80;background:rgba(10,14,24,.45);display:flex;align-items:center;justify-content:center;padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .modal{width:min(480px,100%);max-height:100%;overflow:auto;background:var(--surface);border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
 .modal header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
 .modal header h2{font-size:17px;margin-right:auto}
@@ -350,7 +350,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
 .plan.best{border:2px solid var(--accent);box-shadow:var(--shadow)}
 .plan-h{display:flex;align-items:center;gap:10px;justify-content:space-between}
 .plan-h h3{font-size:18px}
-.tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
+.plan-h .tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
 .price{display:flex;align-items:baseline;gap:4px}
 .price b{font-size:34px;font-weight:600;letter-spacing:-.02em}
 .price span{color:var(--muted)}
@@ -500,6 +500,24 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
 .ck li.done .ck-i{border-color:var(--pos);background:var(--pos)}
 .ck li.done .ck-i::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
 .ck-arrow{margin-left:auto;color:var(--accent)}
+
+/* ---- Termos, privacidade ---- */
+.modal.wide{width:min(760px,100%)}
+.legal{padding:4px 22px 8px;line-height:1.6;max-width:72ch}
+.legal h3{font-size:15.5px;margin:20px 0 6px}
+.legal p,.legal li{color:var(--fg);font-size:14.5px}
+.legal p{margin:0 0 10px}
+.legal ul{margin:0 0 10px;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.legal-meta{color:var(--muted)!important;font-size:12.5px!important;margin-top:14px!important}
+.legal-foot{padding:14px 22px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
+.terms-check{align-items:flex-start;font-weight:400;font-size:13.5px;line-height:1.45}
+.terms-check input{margin-top:1px}
+.terms-check .linkish{font-size:inherit;font-weight:600}
+.priv-links{display:flex;gap:18px;flex-wrap:wrap}
+.btn.danger-solid{background:var(--neg);border-color:var(--neg);color:#fff}
+.btn.danger-solid:hover{filter:brightness(1.08)}
+.lp-foot-links{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.lp-foot-links .linkish{font-weight:500;color:var(--muted);font-size:13px}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -688,7 +706,7 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
     </div>
   </section>
 
-  <footer class="lp-foot"><div class="lp-in lp-foot-in"><span class="brand"><span class="logo-sm"></span>Saldo Certo</span><span class="sub">© 2026 Saldo Certo · Controle financeiro pessoal</span></div></footer>
+  <footer class="lp-foot"><div class="lp-in lp-foot-in"><span class="brand"><span class="logo-sm"></span>Saldo Certo</span><span class="lp-foot-links"><button class="linkish" data-act="legal" data-doc="termos">Termos de Uso</button><button class="linkish" data-act="legal" data-doc="privacidade">Política de Privacidade</button><span class="sub">© 2026 Saldo Certo</span></span></div></footer>
 </div>
 
 <div class="auth" id="auth">
@@ -884,7 +902,7 @@ async function enterApp(s){
 async function boot(){
   renderAuth();
   if(!sb){auth="setup";renderAuth();setSync("warn","Banco não configurado");return}
-  sb.from("app_settings").select("price_monthly,price_yearly,trial_days").eq("id",1).maybeSingle().then(r=>{if(r.data){applySettings(r.data);renderLanding();if(auth==="signup")renderAuth()}},()=>{});
+  sb.from("app_settings").select("*").eq("id",1).maybeSingle().then(r=>{if(r.data){applySettings(r.data);renderLanding();if(auth==="signup")renderAuth()}},()=>{});
   const recovery=/type=recovery/.test(INIT_HASH), signupLink=/type=signup|type=email/.test(INIT_HASH);
   const linkErr=/error_code=([^&]+)/.exec(INIT_HASH);
   sb.auth.onAuthStateChange((ev,s)=>{
@@ -932,6 +950,7 @@ function renderAuth(){
         <div class="field"><label for="s-email">E-mail</label><input id="s-email" type="email" autocomplete="email" placeholder="voce@email.com"></div>
         <div class="field"><label for="s-pw">Senha</label><input id="s-pw" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"><div class="pw-meter" id="pwMeter" data-s="0"><i></i><i></i><i></i><i></i></div></div>
         ${pwField("s-pw2","Confirmar senha","new-password")}
+        <label class="check terms-check"><input type="checkbox" id="s-terms"> <span>Li e aceito os <button type="button" class="linkish" data-act="legal" data-doc="termos">Termos de Uso</button> e a <button type="button" class="linkish" data-act="legal" data-doc="privacidade">Política de Privacidade</button>.</span></label>
         ${e}<button class="btn primary" id="signupBtn">Criar conta</button>
       </form>
       <p class="sub" style="margin:0">Já tem conta? <button class="linkish" data-act="to-login">Entrar</button></p>`;break;
@@ -961,6 +980,7 @@ function formErr(msg){
 function busy(id,on,label){const b=$("#"+id);if(!b)return;b.disabled=on;if(label)b.textContent=label}
 function trErr(m){
   m=m||"";
+  if(/não pode|Acesso restrito|Faça login|Sem permissão|não encontrado/i.test(m))return m;
   if(/Invalid login credentials/i.test(m))return"E-mail ou senha incorretos.";
   if(/Email not confirmed/i.test(m))return"Seu e-mail ainda não foi confirmado. Abra o link que enviamos para confirmar a conta.";
   if(/rate limit|security purposes|too many/i.test(m))return"Muitas tentativas seguidas. Aguarde um minuto e tente de novo.";
@@ -986,8 +1006,9 @@ async function doSignup(){
   if(!emailOk(email))return formErr("Digite um e-mail válido.");
   if(pw.length<8)return formErr("A senha precisa ter pelo menos 8 caracteres.");
   if(pw!==pw2)return formErr("As senhas não são iguais. Digite de novo.");
+  if(!$("#s-terms").checked)return formErr("Para criar a conta, aceite os Termos de Uso e a Política de Privacidade.");
   busy("signupBtn",true,"Criando conta…");
-  const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{name},emailRedirectTo:APP_URL}});
+  const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{name,accepted_terms:"true",terms_version:TERMS_VERSION},emailRedirectTo:APP_URL}});
   if(error){busy("signupBtn",false,"Criar conta");return formErr(trErr(error.message))}
   pendingEmail=email;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0)return go("login","Este e-mail já tem uma conta. Entre ou redefina a senha.");
@@ -1080,11 +1101,11 @@ function vAdmin(){
         <td><div style="display:flex;align-items:center;gap:10px"><span class="avatar">${esc(initials(r.name||r.email))}</span><div style="min-width:0"><div style="font-weight:500">${esc(r.name||"Sem nome")}${self?' <span class="sub">(você)</span>':""}${r.role==="admin"?' <span class="pill open">Admin</span>':""}</div><div class="sub">${esc(r.email)}</div></div></div></td>
         <td>${pill(planOf(r))}</td><td>${pill(st)}</td>
         <td class="num">${fmtDate(r.created_at)}</td><td class="num">${fmtDate(r.last_sign_in_at)}</td><td class="r num">${r.tx_count}</td>
-        <td><div class="acts">${self?"":`${r.role!=="admin"&&plansReady?`<button class="btn sm" data-act="admin-grant" data-id="${r.id}" title="Liberar 30 dias de acesso">+30 dias</button>`:""}<button class="btn sm ${r.blocked?"":"danger"}" data-act="admin-block" data-id="${r.id}">${r.blocked?"Reativar":"Suspender"}</button><button class="btn sm ghost" data-act="admin-role" data-id="${r.id}">${r.role==="admin"?"Remover admin":"Tornar admin"}</button>`}</div></td></tr>`}).join(""):`<tr><td colspan="7"><div class="empty">Nenhum usuário encontrado.</div></td></tr>`}</tbody>
+        <td><div class="acts">${self?"":`${r.role!=="admin"&&plansReady?`<button class="btn sm" data-act="admin-grant" data-id="${r.id}" title="Liberar 30 dias de acesso">+30 dias</button>`:""}${r.role!=="admin"?`<button class="btn sm ghost danger" data-act="admin-del" data-id="${r.id}" title="Excluir a conta e todos os dados">Excluir</button>`:""}<button class="btn sm ${r.blocked?"":"danger"}" data-act="admin-block" data-id="${r.id}">${r.blocked?"Reativar":"Suspender"}</button><button class="btn sm ghost" data-act="admin-role" data-id="${r.id}">${r.role==="admin"?"Remover admin":"Tornar admin"}</button>`}</div></td></tr>`}).join(""):`<tr><td colspan="7"><div class="empty">Nenhum usuário encontrado.</div></td></tr>`}</tbody>
     </table></div>
     <p class="note">Por privacidade, este painel mostra só os dados da conta. Os lançamentos de cada pessoa ficam protegidos e nem o administrador consegue lê-los.</p>
   </div>
-  ${plansReady?adminBillingCard():""}</div>`;
+  ${plansReady?adminBillingCard()+adminLegalCard():""}</div>`;
 }
 async function adminUpdate(id,patch,msg){
   const {error}=await sb.from("profiles").update(patch).eq("id",id);
@@ -1343,6 +1364,143 @@ function checklistCard(){
   return`<div class="card checklist"><div class="card-h"><h2>Primeiros passos</h2><span class="sub">${n} de ${items.length} concluídos</span><button class="btn sm ghost" data-act="checklist-hide">Ocultar</button></div>
   <div class="bar ok"><i style="width:${n/items.length*100}%"></i></div>
   <ul class="ck">${items.map(i=>`<li class="${i.done?"done":""}">${i.done?`<span class="ck-i" aria-hidden="true"></span><span>${i.t}</span>`:`<button class="ck-go" ${i.act}><span class="ck-i" aria-hidden="true"></span><span>${i.t}</span><span class="ck-arrow" aria-hidden="true">→</span></button>`}</li>`).join("")}</ul></div>`;
+}
+
+/* ---------- Termos, Privacidade e dados pessoais ---------- */
+const TERMS_VERSION="2026-10-19",TERMS_DATE="19 de outubro de 2026";
+function legalWho(){
+  const n=settings.legal_name,d=settings.legal_doc,e=settings.contact_email;
+  return{by:n?"por "+esc(n)+(d?`, inscrito(a) sob o ${d.replace(/\D/g,"").length>11?"CNPJ":"CPF"} nº ${esc(d)}`:""):"pelo responsável pelo Saldo Certo",name:n||"o responsável pelo Saldo Certo",full:n?(esc(n)+(d?`, inscrito(a) sob o ${d.replace(/\D/g,"").length>11?"CNPJ":"CPF"} nº ${esc(d)}`:"")):"o responsável pelo Saldo Certo",email:e?`<b>${esc(e)}</b>`:"o canal de contato informado no aplicativo"};
+}
+function termsHTML(){
+  const w=legalWho(),pm=money(settings.price_monthly),py=money(settings.price_yearly),td=settings.trial_days,site=esc(location.origin+location.pathname);
+  return`<div class="legal"><p class="legal-meta">Versão de ${TERMS_DATE}</p>
+<p>Estes Termos de Uso regulam o uso do Saldo Certo, disponível em ${site}, oferecido ${w.by}. Ao criar uma conta, você declara que leu e concorda com estes Termos e com a Política de Privacidade.</p>
+<h3>1. O que é o Saldo Certo</h3>
+<p>O Saldo Certo é uma ferramenta para organizar finanças pessoais: registrar receitas e despesas, acompanhar cartões de crédito, orçamentos e metas, e ver relatórios e previsões. O Saldo Certo <b>não é banco nem instituição financeira</b>, não movimenta dinheiro, não acessa suas contas bancárias e não presta consultoria financeira, contábil ou de investimentos.</p>
+<h3>2. Sua conta</h3>
+<p>Para usar o serviço você precisa ter 18 anos ou mais, ou autorização do seu responsável legal, e informar um e-mail válido. Você é responsável por manter sua senha em segredo e por tudo o que for feito com a sua conta. Se perceber uso indevido, troque a senha e avise pelo contato abaixo.</p>
+<h3>3. Teste grátis, planos e pagamento</h3>
+<ul><li>Toda conta nova tem ${td} dias de teste grátis, com acesso a todos os recursos.</li>
+<li>Depois do teste, o uso depende de um plano pago: mensal (${pm} por mês) ou anual (${py} por ano), nos valores exibidos no aplicativo no momento da contratação.</li>
+<li>O pagamento é feito por Pix. O acesso é liberado depois que o pagamento é confirmado, normalmente em poucas horas.</li>
+<li><b>Não existe renovação ou cobrança automática.</b> Se você não pagar o próximo período, o plano não é renovado e o acesso fica limitado à tela de planos. Seus dados continuam guardados.</li>
+<li>Pelo Código de Defesa do Consumidor (art. 49), você pode desistir da contratação em até 7 dias depois do pagamento e receber o valor de volta. Para isso, entre em contato pelo canal abaixo.</li>
+<li>Os preços podem mudar. Uma mudança nunca afeta um período que você já pagou.</li></ul>
+<h3>4. Uso permitido</h3>
+<p>Você concorda em não usar o Saldo Certo para fins ilegais, não tentar acessar dados de outras pessoas, não tentar burlar as regras de acesso ou de pagamento, e não sobrecarregar ou atacar o serviço. O descumprimento pode levar à suspensão da conta.</p>
+<h3>5. Seus dados</h3>
+<p>As informações que você registra são suas. Você pode exportá-las e excluir a conta a qualquer momento, em Ajustes. O tratamento dos dados pessoais segue a Política de Privacidade.</p>
+<h3>6. Previsões e limitação de responsabilidade</h3>
+<p>Saldos, previsões, alertas e relatórios são calculados a partir das informações que você registra e servem como apoio à organização. Eles podem não refletir a sua situação real se os dados estiverem incompletos ou errados. As decisões financeiras são suas. Trabalhamos para manter o serviço disponível e seguro, mas podem ocorrer interrupções para manutenção ou por falhas de terceiros, como o provedor de hospedagem e o banco de dados.</p>
+<h3>7. Suspensão e encerramento</h3>
+<p>Você pode excluir sua conta quando quiser. Podemos suspender ou encerrar contas que descumpram estes Termos. Se o serviço for descontinuado, avisaremos com pelo menos 30 dias de antecedência para que você possa exportar seus dados.</p>
+<h3>8. Mudanças nestes Termos</h3>
+<p>Estes Termos podem ser atualizados. Mudanças importantes serão avisadas no aplicativo, e a data da versão aparece no topo desta página.</p>
+<h3>9. Lei aplicável e contato</h3>
+<p>Estes Termos seguem as leis do Brasil. Fica eleito o foro do domicílio do consumidor. Dúvidas, pedidos de reembolso ou reclamações: ${w.email}.</p></div>`;
+}
+function privacyHTML(){
+  const w=legalWho();
+  return`<div class="legal"><p class="legal-meta">Versão de ${TERMS_DATE}</p>
+<p>Esta Política explica quais dados pessoais o Saldo Certo trata, para quê e quais são os seus direitos, conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, LGPD).</p>
+<h3>1. Quem é o controlador</h3>
+<p>O controlador dos dados é ${w.full}. Contato para assuntos de privacidade: ${w.email}.</p>
+<h3>2. Quais dados tratamos</h3>
+<ul><li><b>Cadastro:</b> nome, e-mail e senha. A senha é guardada de forma criptografada pelo serviço de autenticação e ninguém consegue vê-la.</li>
+<li><b>Dados financeiros que você informa ou importa:</b> lançamentos, valores, datas, categorias, nomes das contas, cartões (nome, limite e dias de fechamento e vencimento), orçamentos e metas. <b>Nunca pedimos número de cartão, senha de banco ou acesso à sua conta bancária.</b></li>
+<li><b>Assinatura:</b> plano escolhido, valor, data do aviso de pagamento e situação. Como em qualquer Pix, o recebedor vê no próprio extrato o nome de quem pagou.</li>
+<li><b>Dados técnicos:</b> datas de cadastro e último acesso, e registros técnicos do provedor de hospedagem (como endereço IP), usados para segurança.</li></ul>
+<h3>3. Para que usamos e com qual base legal</h3>
+<ul><li>Prestar o serviço que você contratou: guardar e mostrar suas finanças, calcular relatórios e previsões, enviar e-mails de confirmação e de troca de senha (execução de contrato, art. 7º, V).</li>
+<li>Controlar teste grátis, planos e pagamentos (execução de contrato).</li>
+<li>Prevenir fraudes e manter a segurança do serviço (legítimo interesse, art. 7º, IX).</li>
+<li>Cumprir obrigações legais e atender autoridades quando a lei exigir (art. 7º, II).</li></ul>
+<p><b>Não vendemos seus dados, não usamos suas finanças para publicidade e não compartilhamos com terceiros para marketing.</b></p>
+<h3>4. Quem tem acesso</h3>
+<ul><li><b>Você</b>, pela sua conta.</li>
+<li><b>O administrador do Saldo Certo</b> vê apenas nome, e-mail, datas de cadastro e acesso, situação do plano, pagamentos e a quantidade de lançamentos. <b>Ele não consegue ler o conteúdo das suas finanças.</b> Isso é garantido por regras no próprio banco de dados.</li>
+<li><b>Operadores que fazem o serviço funcionar:</b> Supabase (banco de dados e autenticação), GitHub Pages (hospedagem do site) e o provedor de envio de e-mails. Eles tratam os dados apenas para prestar esses serviços. Alguns ficam fora do Brasil, e a transferência internacional segue o art. 33 da LGPD, com contratos e garantias de proteção.</li></ul>
+<h3>5. Segurança</h3>
+<p>A conexão é criptografada (HTTPS), o acesso exige e-mail confirmado e senha, e cada conta só consegue ler os próprios dados. Nenhum sistema é 100% invulnerável. Se houver um incidente de segurança relevante, avisaremos você e a ANPD, como a lei determina.</p>
+<h3>6. Por quanto tempo guardamos</h3>
+<p>Enquanto a sua conta existir. Quando você exclui a conta, o login, o perfil, os lançamentos e o histórico de pagamentos são apagados na hora do banco de dados principal. Cópias de segurança automáticas do provedor podem levar alguns dias para expirar.</p>
+<h3>7. Seus direitos</h3>
+<p>Pelo art. 18 da LGPD, você pode a qualquer momento: confirmar se tratamos seus dados e acessá-los; corrigir dados incompletos ou errados; <b>exportar seus dados</b> (portabilidade); <b>excluir sua conta e seus dados</b>; saber com quem compartilhamos; e revogar consentimentos. Exportar e excluir estão disponíveis em <b>Ajustes &gt; Privacidade e dados</b>. Para os demais pedidos, use o contato acima. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).</p>
+<h3>8. Armazenamento no navegador</h3>
+<p>Não usamos cookies de publicidade nem de rastreamento. O navegador guarda apenas o que é necessário para manter você conectado e pequenas preferências, como a data do último aviso exibido.</p>
+<h3>9. Crianças e adolescentes</h3>
+<p>O serviço é voltado a maiores de 18 anos. Menores só podem usá-lo com autorização e acompanhamento do responsável legal.</p>
+<h3>10. Mudanças nesta Política</h3>
+<p>Podemos atualizar esta Política. Mudanças importantes serão avisadas no aplicativo, e a data da versão aparece no topo.</p></div>`;
+}
+function openLegal(doc){
+  openModal(doc==="privacidade"?"Política de Privacidade":"Termos de Uso",(doc==="privacidade"?privacyHTML():termsHTML())+`<div class="mfoot legal-foot"><button type="button" class="btn" data-act="legal" data-doc="${doc==="privacidade"?"termos":"privacidade"}">${doc==="privacidade"?"Ler os Termos de Uso":"Ler a Política de Privacidade"}</button><button type="button" class="btn primary" data-act="close-modal">Fechar</button></div>`,true);
+}
+
+function privacyCard(){
+  const isApp=auth==="app";
+  return`<div class="card" style="max-width:640px"><div class="card-h"><h2>Seus dados</h2></div>
+    <p class="sub" style="margin:0">Seus dados são seus. Baixe uma cópia completa quando quiser ou exclua a conta de vez.</p>
+    <div class="priv-links"><button class="linkish" data-act="legal" data-doc="termos">Termos de Uso</button><button class="linkish" data-act="legal" data-doc="privacidade">Política de Privacidade</button></div>
+    ${isApp&&profile&&profile.terms_accepted_at?`<p class="sub" style="margin:0">Você aceitou os termos em ${fmtDate(profile.terms_accepted_at)}.</p>`:""}
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="export-all">${ICON.dl}Baixar todos os meus dados</button>${isApp?`<button class="btn danger" data-act="delete-account">${ICON.trash}Excluir minha conta</button>`:""}</div>
+  </div>`;
+}
+function exportAll(){
+  const data={exportado_em:new Date().toISOString(),aplicativo:"Saldo Certo",conta:profile?{nome:profile.name,email:profile.email,criada_em:profile.created_at,plano:profile.plan,teste_ate:profile.trial_ends_at,pago_ate:profile.paid_until,termos_aceitos_em:profile.terms_accepted_at}:null,pagamentos:myPays,financas:state};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+  const a=document.createElement("a");a.href=url;a.download=`saldo-certo-meus-dados-${TODAY}.json`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);toast("Arquivo com todos os seus dados baixado");
+}
+function deleteAccountModal(){
+  openModal("Excluir minha conta",`<form id="delForm" class="mform">
+    <p class="note danger" style="margin:0"><b>Isso não pode ser desfeito.</b> Serão apagados para sempre: seu login, seus lançamentos, contas, cartões, orçamentos, metas e o histórico de pagamentos.${subInfo().kind==="pro"?" Os dias que ainda restam no seu plano também serão perdidos.":""}</p>
+    <p class="sub" style="margin:0">Se quiser guardar uma cópia, <button type="button" class="linkish" data-act="export-all">baixe seus dados</button> antes.</p>
+    <div class="field"><label for="del-pw">Sua senha</label><input id="del-pw" type="password" autocomplete="current-password"></div>
+    <div class="field"><label for="del-word">Para confirmar, digite EXCLUIR</label><input id="del-word" autocomplete="off" autocapitalize="characters"></div>
+    <p class="form-err" id="delErr" hidden></p>
+    <div class="mfoot"><button type="button" class="btn" data-act="close-modal">Cancelar</button><button class="btn danger-solid" id="delBtn">Excluir conta para sempre</button></div>
+  </form>`);
+}
+async function doDeleteAccount(){
+  const pw=$("#del-pw").value,word=$("#del-word").value.trim().toUpperCase(),err=$("#delErr");
+  const fail=m=>{err.textContent=m;err.hidden=false;const b=$("#delBtn");if(b){b.disabled=false;b.textContent="Excluir conta para sempre"}};
+  if(!pw)return fail("Digite sua senha.");
+  if(word!=="EXCLUIR")return fail("Digite EXCLUIR, em letras maiúsculas, para confirmar.");
+  const b=$("#delBtn");b.disabled=true;b.textContent="Excluindo…";
+  const r=await sb.auth.signInWithPassword({email:profile.email,password:pw});
+  if(r.error)return fail("Senha incorreta.");
+  clearTimeout(saveTimer);
+  const {error}=await sb.rpc("delete_my_account");
+  if(error)return fail(trErr(error.message));
+  try{await sb.auth.signOut()}catch(e){}
+  try{localStorage.removeItem("sc-notified")}catch(e){}
+  state=null;profile=null;session=null;myPays=[];locked=false;closeModal();closeDrawer();$("#view").innerHTML="";
+  go("landing");toast("Sua conta e todos os seus dados foram excluídos.");
+}
+function adminLegalCard(){
+  const s=settings,missing=!s.legal_name||!s.contact_email;
+  return`<div class="card" id="responsavel"><div class="card-h"><h2>Responsável pelo app</h2><span class="sub">Aparece nos Termos de Uso e na Política de Privacidade.</span></div>
+  ${missing?`<p class="note danger" style="margin:0">A LGPD exige que os usuários saibam quem é o responsável pelos dados e como falar com ele. Preencha pelo menos o nome e o e-mail de contato.</p>`:""}
+  <form id="legalForm" class="bill-grid">
+    <div class="field"><label for="lg-name">Nome ou razão social</label><input id="lg-name" value="${esc(s.legal_name)}" placeholder="Seu nome ou o nome da empresa"></div>
+    <div class="field"><label for="lg-doc">CPF ou CNPJ (opcional)</label><input id="lg-doc" value="${esc(s.legal_doc)}" placeholder="00.000.000/0001-00"></div>
+    <div class="field"><label for="lg-email">E-mail de contato</label><input id="lg-email" type="email" value="${esc(s.contact_email)}" placeholder="contato@seudominio.com.br"></div>
+    <div class="bill-foot"><div style="display:flex;gap:12px;flex-wrap:wrap"><button type="button" class="linkish" data-act="legal" data-doc="termos">Ver Termos</button><button type="button" class="linkish" data-act="legal" data-doc="privacidade">Ver Política</button></div><button class="btn primary">Salvar responsável</button></div>
+  </form></div>`;
+}
+async function saveLegal(){
+  const patch={legal_name:$("#lg-name").value.trim(),legal_doc:$("#lg-doc").value.trim(),contact_email:$("#lg-email").value.trim().toLowerCase()};
+  if(patch.contact_email&&!emailOk(patch.contact_email))return toast("Confira o e-mail de contato.");
+  const {error}=await sb.from("app_settings").update(patch).eq("id",1);
+  if(error)return toast(/column|legal_name|schema cache/i.test(error.message)?"Rode o arquivo legal.sql no Supabase antes de salvar.":trErr(error.message));
+  applySettings(patch);render();toast("Responsável salvo");
+}
+async function adminDeleteUser(uid){
+  const {error}=await sb.rpc("admin_delete_user",{uid});
+  if(error)return toast(trErr(error.message));
+  toast("Conta excluída com todos os dados");adminRows=null;render();
 }
 
 /* ---------- Cálculos ---------- */
@@ -1681,7 +1839,9 @@ function vContas(){
   <div style="display:flex;align-items:center;gap:10px"><span class="avatar">${esc(initials(profile.name||profile.email))}</span><div><b>${esc(profile.name||"Sem nome")}</b><div class="sub">${esc(profile.email)} · ${isAdmin()?"Administrador":"Conta pessoal"}</div></div></div>
   <form id="pwForm" style="display:flex;flex-direction:column;gap:10px"><div class="field"><label for="p-cur">Senha atual</label><input id="p-cur" type="password" autocomplete="current-password"></div>
   <div class="two"><div class="field"><label for="p-new">Nova senha</label><input id="p-new" type="password" autocomplete="new-password"></div><div class="field"><label for="p-new2">Confirmar nova senha</label><input id="p-new2" type="password" autocomplete="new-password"></div></div>
-  <p class="form-err" id="pErr" hidden></p><button class="btn" style="align-self:flex-start">Alterar senha</button></form></div>`:""}`;
+  <p class="form-err" id="pErr" hidden></p><button class="btn" style="align-self:flex-start">Alterar senha</button></form></div>`:""}
+  <h2 class="sec-h">Privacidade e dados</h2>
+  ${privacyCard()}`;
 }
 
 /* ---------- Importar extrato ---------- */
@@ -1855,7 +2015,7 @@ function saveTx(){
 }
 
 /* ---------- Janelas (cartão e pagamento de fatura) ---------- */
-function openModal(title,html){$("#modalTitle").textContent=title;$("#modalBody").innerHTML=html;$("#modal").hidden=false;setTimeout(()=>{const f=$("#modalBody input,#modalBody select");if(f)f.focus()},50)}
+function openModal(title,html,wide){$("#modalTitle").textContent=title;$("#modalBody").innerHTML=html;$("#modal .modal").classList.toggle("wide",!!wide);$("#modal").hidden=false;$("#modalBody").scrollTop=0;$("#modal .modal").scrollTop=0;setTimeout(()=>{const f=$("#modalBody input,#modalBody select");if(f)f.focus()},50)}
 function closeModal(){$("#modal").hidden=true;$("#modalBody").innerHTML=""}
 let editingCard=null;
 function cardForm(c){
@@ -1956,6 +2116,10 @@ document.addEventListener("click",e=>{
     case"pay-approve":reviewPayment(id,true);break;
     case"pay-reject":if(pendingDel===id){pendingDel=null;reviewPayment(id,false)}else{pendingDel=id;b.textContent="Confirmar?";setTimeout(()=>{if(pendingDel===id){pendingDel=null;render()}},3500)}break;
     case"admin-grant":grantDays(id,30);break;
+    case"admin-del":if(pendingDel===id){pendingDel=null;adminDeleteUser(id)}else{pendingDel=id;b.textContent="Confirmar exclusão";b.classList.remove("ghost");setTimeout(()=>{if(pendingDel===id){pendingDel=null;render()}},4000)}break;
+    case"legal":openLegal(b.dataset.doc);break;
+    case"export-all":if(state)exportAll();break;
+    case"delete-account":deleteAccountModal();break;
     case"admin-block":{const r=(adminRows||[]).find(x=>x.id===id);if(r)adminUpdate(id,{blocked:!r.blocked},r.blocked?"Conta reativada":"Conta suspensa");break}
     case"admin-role":{const r=(adminRows||[]).find(x=>x.id===id);if(r)adminUpdate(id,{role:r.role==="admin"?"user":"admin"},r.role==="admin"?"Agora é usuário comum":"Agora é administrador");break}
     case"export":exportCSV();break;
@@ -1999,6 +2163,8 @@ document.addEventListener("submit",e=>{
   if(f.id==="cardForm"){e.preventDefault();saveCard();return}
   if(f.id==="billingForm"){e.preventDefault();saveBilling();return}
   if(f.id==="wizForm"){e.preventDefault();wizNext();return}
+  if(f.id==="delForm"){e.preventDefault();doDeleteAccount();return}
+  if(f.id==="legalForm"){e.preventDefault();saveLegal();return}
   if(f.id==="payForm"){e.preventDefault();savePayInv();return}
   if(f.id==="impMapForm"){e.preventDefault();const c=imp.csv;c.map={date:+$("#impMapDate").value,desc:+$("#impMapDesc").value,val:+$("#impMapVal").value};c.invert=$("#impInvert").checked;const r=rowsFromCSV(c);if(r.length){imp.err="";finishRows(r)}else{imp.rows=null;imp.err="Ainda não conseguimos ler datas e valores com essas colunas."}render();return}
   if(f.id==="catForm"){e.preventDefault();const name=$("#nc-name").value.trim();if(!name)return toast("Dê um nome para a categoria.");const type=$("#nc-type").value;if(CATS[type].some(([,n])=>n.toLowerCase()===name.toLowerCase()))return toast("Já existe uma categoria com esse nome.");state.customCats.push({id:"c_"+uid(),name,color:$("#nc-color").value,type});commit("Categoria criada");return}
