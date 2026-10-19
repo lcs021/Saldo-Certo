@@ -6,6 +6,12 @@
 <meta name="description" content="Saldo Certo: controle financeiro pessoal com painel, lançamentos, orçamentos e metas.">
 <meta name="theme-color" content="#2E43C9">
 <title>Saldo Certo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Saldo Certo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='21' cy='27' r='17' fill='%23E5E8FA' stroke='%232E43C9' stroke-width='3'/%3E%3Cpath d='M12.5 27.5l6.5 6.5L37.5 11.5M30 10.5h8.5V19' fill='none' stroke='%23131A2C' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -367,6 +373,134 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
 .bill-grid select{padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);width:100%}
 .bill-foot{grid-column:1/-1;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 @media (max-width:760px){.plans{grid-template-columns:1fr}.bill-grid{grid-template-columns:1fr}.bill-grid .span2{grid-column:auto}.pay-row{grid-template-columns:auto minmax(0,1fr) auto}.pay-row .acts{grid-column:1/-1;justify-content:flex-start}}
+
+/* ---- Página de apresentação ---- */
+.landing{position:fixed;inset:0;z-index:72;overflow:auto;background:var(--bg);scroll-behavior:smooth}
+.lp-in{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.lp-top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.lp-bar{display:flex;align-items:center;gap:16px;height:64px}
+.lp-brand{text-decoration:none;color:var(--fg)}
+.lp-links{display:flex;gap:4px;margin-left:12px}
+.lp-links button{border:0;background:none;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:500}
+.lp-links button:hover{color:var(--fg);background:var(--surface-2)}
+.lp-cta-top{margin-left:auto;display:flex;gap:8px}
+.lp-hero{padding-block:64px 56px}
+.lp-hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.lp-hero-copy{display:flex;flex-direction:column;gap:18px;min-width:0}
+.lp-eyebrow{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--accent)}
+.lp-hero h1{font-size:clamp(34px,5vw,56px);line-height:1.04;letter-spacing:-.025em}
+.lp-lead{font-size:18px;line-height:1.55;color:var(--muted);margin:0;max-width:52ch}
+.lp-actions{display:flex;flex-wrap:wrap;gap:10px}
+.lp-big{padding:13px 20px;font-size:15px;border-radius:10px}
+.lp-fine{margin:0;font-size:13.5px;color:var(--muted)}
+.lp-fine b{color:var(--fg)}
+.lp-shot{min-width:0}
+.lp-win{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px -30px color-mix(in srgb,var(--accent) 45%,transparent),var(--shadow);overflow:hidden;transform:rotate(-1.2deg)}
+.lp-win-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.lp-win-bar i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.lp-win-bar span{margin-left:8px;font-size:12px;color:var(--muted);font-weight:600}
+.lp-win-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+.lp-kpi-row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px}
+.lp-kpi{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.lp-kpi small{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.lp-kpi b{font-size:19px}
+.lp-kpi span{font-size:11.5px;color:var(--muted)}
+.lp-kpi.dark{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.lp-kpi.dark small,.lp-kpi.dark span{color:var(--bg);opacity:.75}
+.lp-kpi.dark span b{font-size:11.5px}
+.lp-delta{color:var(--pos)!important;font-weight:600}
+.lp-chart{border:1px solid var(--line);border-radius:10px;padding:12px 12px 6px}
+.lp-row2{display:grid;grid-template-columns:.9fr 1.3fr;gap:10px}
+.lp-card-mini{border-radius:10px;padding:12px;color:#fff;background:linear-gradient(135deg,#7A1FA2,#3F0E55);display:flex;flex-direction:column;justify-content:flex-end;gap:1px;min-height:96px}
+.lp-card-mini span{font-weight:600;font-size:12.5px}
+.lp-card-mini b{font-size:16px}
+.lp-card-mini small{font-size:10.5px;opacity:.8}
+.lp-alerts{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lp-alert{display:grid;grid-template-columns:3px 1fr;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.lp-alert i{border-radius:2px}
+.lp-alert.warn i{background:var(--warn)}.lp-alert.neg i{background:var(--neg)}
+.lp-alert b{display:block;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp-alert small{font-size:10.5px;color:var(--muted)}
+.lp-alert span{min-width:0}
+.lp-strip{border-block:1px solid var(--line);background:var(--surface)}
+.lp-strip-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-block:20px}
+.lp-strip-row span{font-size:13.5px;color:var(--muted);padding-left:14px;border-left:3px solid var(--accent-soft)}
+.lp-strip-row b{color:var(--fg)}
+.lp-sec{padding-block:72px}
+.lp-alt{background:var(--surface);border-block:1px solid var(--line)}
+.lp-h2{font-size:clamp(26px,3.4vw,36px);text-align:center;letter-spacing:-.02em;margin-bottom:12px}
+.lp-sub{text-align:center;color:var(--muted);font-size:16.5px;margin:0 auto 32px;max-width:60ch}
+#lp-recursos .lp-h2{margin-bottom:36px}
+.lp-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.lp-feat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.lp-feat h3{font-size:16.5px}
+.lp-feat p{margin:0;color:var(--muted);line-height:1.55}
+.lp-ic{width:40px;height:40px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin-bottom:4px}
+.lp-ic svg{width:20px;height:20px}
+.lp-steps{list-style:none;counter-reset:s;margin:36px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.lp-steps li{counter-increment:s;display:flex;flex-direction:column;gap:6px;position:relative;padding-top:52px}
+.lp-steps li::before{content:counter(s);position:absolute;top:0;left:0;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:17px}
+.lp-steps b{font-family:var(--f-display);font-size:18px}
+.lp-steps span{color:var(--muted);line-height:1.55}
+.lp-prices{display:grid;grid-template-columns:repeat(2,minmax(0,320px));gap:16px;justify-content:center;margin-bottom:18px}
+.lp-price{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.lp-price.best{border:2px solid var(--accent);box-shadow:var(--shadow)}
+.lp-price h3{font-size:18px}
+.lp-price p{margin:0;color:var(--muted)}
+.lp-price .btn{margin-top:8px}
+.lp-safe{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center}
+.lp-faq{max-width:760px}
+.lp-faq .lp-h2{margin-bottom:28px}
+.lp-faq details{border-bottom:1px solid var(--line)}
+.lp-faq summary{cursor:pointer;padding:18px 32px 18px 0;font-weight:600;font-size:16px;list-style:none;position:relative}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary::after{content:"+";position:absolute;right:4px;top:14px;font-size:22px;color:var(--accent);font-weight:400}
+.lp-faq details[open] summary::after{content:"−"}
+.lp-faq details p{margin:0 0 18px;color:var(--muted);line-height:1.6;max-width:65ch}
+.lp-final{background:var(--accent);color:var(--accent-ink)}
+.lp-final-in{padding-block:64px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.lp-final h2{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.02em}
+.lp-final p{margin:0;opacity:.85;font-size:16.5px}
+.lp-inv{background:var(--accent-ink);color:var(--accent);border-color:var(--accent-ink);font-weight:700}
+.lp-ghost{background:transparent;color:var(--accent-ink);border-color:color-mix(in srgb,var(--accent-ink) 50%,transparent)}
+.lp-ghost:hover,.lp-inv:hover{filter:brightness(1.05);background:color-mix(in srgb,var(--accent-ink) 12%,transparent)}
+.lp-inv:hover{background:var(--accent-ink)}
+.lp-foot{padding-block:28px calc(28px + env(safe-area-inset-bottom,0px))}
+.lp-foot-in{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lp-foot .brand{font-size:16px}
+.lp-foot .logo-sm{width:24px;height:24px}
+.auth-back{align-self:flex-start;margin-bottom:6px}
+.landing .brand{display:flex!important}
+@media (max-width:960px){.lp-hero-grid{grid-template-columns:1fr;gap:40px}.lp-win{transform:none}.lp-feats{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-strip-row{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-safe{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .lp-links{display:none}.lp-cta-top .btn.ghost{padding-inline:10px}
+  .lp-hero{padding-block:36px 40px}.lp-lead{font-size:16.5px}
+  .lp-actions .lp-big{flex:1 1 100%}
+  .lp-feats,.lp-steps,.lp-prices{grid-template-columns:1fr}
+  .lp-strip-row{grid-template-columns:1fr;gap:10px}
+  .lp-sec{padding-block:52px}
+  .lp-kpi-row,.lp-row2{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.landing{scroll-behavior:auto}}
+/* ---- Assistente e checklist ---- */
+.wz-dots{display:flex;align-items:center;gap:6px}
+.wz-dots i{width:28px;height:5px;border-radius:3px;background:var(--surface-2)}
+.wz-dots i.on{background:var(--accent)}
+.wz-dots span{margin-left:8px;font-size:12px;color:var(--muted);font-weight:600}
+.wz-lead{margin:0;font-size:16px;font-weight:500}
+.checklist{margin-bottom:14px;border-color:var(--accent);background:linear-gradient(0deg,var(--surface),var(--surface)) padding-box}
+.checklist .card-h h2{margin-right:0}
+.checklist .card-h .sub{margin-right:auto}
+.ck{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:8px}
+.ck-go{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;border:1px solid var(--line);width:100%;text-align:left;background:var(--surface);font-weight:500}
+.ck li.done{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;background:var(--pos-soft);color:var(--muted);text-decoration:line-through;border:1px solid transparent}
+.ck-go{cursor:pointer}
+.ck-go:hover{border-color:var(--accent);background:var(--accent-soft)}
+.ck-i{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;position:relative}
+.ck li.done .ck-i{border-color:var(--pos);background:var(--pos)}
+.ck li.done .ck-i::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ck-arrow{margin-left:auto;color:var(--accent)}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -422,9 +556,145 @@ tr.tot td{font-weight:700;border-top:2px solid var(--line)}
 <div class="toast" id="toast" role="status"></div>
 <div class="modal-wrap" id="modal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><header><h2 id="modalTitle"></h2><button class="icon-btn" data-act="close-modal" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header><div id="modalBody"></div></div></div>
 
+<div class="landing" id="landing" hidden>
+  <header class="lp-top">
+    <div class="lp-in lp-bar">
+      <a class="brand lp-brand" href="#" data-act="land-top"><span class="logo-sm"></span>Saldo Certo</a>
+      <nav class="lp-links" aria-label="Seções">
+        <button data-act="land-scroll" data-to="lp-recursos">Recursos</button>
+        <button data-act="land-scroll" data-to="lp-precos">Preços</button>
+        <button data-act="land-scroll" data-to="lp-duvidas">Dúvidas</button>
+      </nav>
+      <div class="lp-cta-top">
+        <button class="btn ghost" data-act="land-login">Entrar</button>
+        <button class="btn primary" data-act="land-signup">Começar grátis</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="lp-hero">
+    <div class="lp-in lp-hero-grid">
+      <div class="lp-hero-copy">
+        <span class="lp-eyebrow">Controle financeiro pessoal</span>
+        <h1>Saiba hoje quanto vai sobrar no fim do mês.</h1>
+        <p class="lp-lead">Receitas, despesas, cartões de crédito e metas num só lugar. O Saldo Certo junta tudo e mostra a previsão do seu saldo antes do mês acabar.</p>
+        <div class="lp-actions">
+          <button class="btn primary lp-big" data-act="land-signup">Testar grátis por <span class="lp-trial">7</span> dias</button>
+          <button class="btn lp-big" data-act="demo">Ver demonstração</button>
+        </div>
+        <p class="lp-fine">Sem cartão de crédito para testar. Depois, <b class="lp-pm">R$ 19,90</b> por mês.</p>
+        <div class="lp-install" id="lpInstall" hidden><button class="btn sm" data-act="install-app">Instalar o app no celular</button></div>
+      </div>
+      <div class="lp-shot" aria-hidden="true">
+        <div class="lp-win">
+          <div class="lp-win-bar"><i></i><i></i><i></i><span>Painel · outubro</span></div>
+          <div class="lp-win-body">
+            <div class="lp-kpi-row">
+              <div class="lp-kpi dark"><small>Saldo em contas</small><b class="num">R$ 8.420,15</b><span>Previsão para 31/10: <b class="num">R$ 6.912,40</b></span></div>
+              <div class="lp-kpi"><small>Despesas do mês</small><b class="num">R$ 3.287,60</b><span class="lp-delta">▼ 8% vs. set</span></div>
+            </div>
+            <div class="lp-chart">
+              <svg viewBox="0 0 300 110" width="100%" role="img" aria-label="Gráfico de receitas e despesas">
+                <line x1="0" x2="300" y1="100" y2="100" stroke="var(--line)"/>
+                <g fill="var(--pos)" opacity=".55"><rect x="14" y="30" width="16" height="70" rx="3"/><rect x="64" y="40" width="16" height="60" rx="3"/><rect x="114" y="34" width="16" height="66" rx="3"/><rect x="164" y="28" width="16" height="72" rx="3"/><rect x="214" y="38" width="16" height="62" rx="3"/></g>
+                <rect x="264" y="22" width="16" height="78" rx="3" fill="var(--pos)"/>
+                <g fill="var(--accent)" opacity=".55"><rect x="33" y="52" width="16" height="48" rx="3"/><rect x="83" y="46" width="16" height="54" rx="3"/><rect x="133" y="56" width="16" height="44" rx="3"/><rect x="183" y="50" width="16" height="50" rx="3"/><rect x="233" y="58" width="16" height="42" rx="3"/></g>
+                <rect x="283" y="54" width="16" height="46" rx="3" fill="var(--accent)"/>
+              </svg>
+            </div>
+            <div class="lp-row2">
+              <div class="lp-card-mini"><span>Nubank</span><b class="num">R$ 2.140,00</b><small>limite disponível</small></div>
+              <div class="lp-alerts">
+                <div class="lp-alert warn"><i></i><span><b>Fatura Nubank vence em 10/11</b><small>R$ 1.284,90</small></span></div>
+                <div class="lp-alert neg"><i></i><span><b>Restaurantes: orçamento estourado</b><small>R$ 42,10 acima do limite</small></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-strip">
+    <div class="lp-in lp-strip-row">
+      <span><b>Pix</b> para assinar, sem burocracia</span>
+      <span><b>Cartão</b> com fatura, fechamento e parcelas</span>
+      <span><b>Extrato OFX e CSV</b> dos principais bancos</span>
+      <span><b>Celular e computador</b>, sempre sincronizados</span>
+    </div>
+  </section>
+
+  <section class="lp-sec" id="lp-recursos">
+    <div class="lp-in">
+      <h2 class="lp-h2">Tudo o que você precisa para colocar as contas em dia</h2>
+      <div class="lp-feats">
+        <div class="lp-feat"><span class="lp-ic" data-ic="relatorios"></span><h3>Previsão do saldo</h3><p>Some o que entra, desconte as contas e as faturas, e veja com quanto você termina o mês.</p></div>
+        <div class="lp-feat"><span class="lp-ic" data-ic="cartoes"></span><h3>Cartões e faturas</h3><p>Compras caem na fatura certa pelo dia de fechamento. Parcelas aparecem nos meses seguintes.</p></div>
+        <div class="lp-feat"><span class="lp-ic" data-ic="up"></span><h3>Importar extrato</h3><p>Suba o arquivo do banco e o app separa por categoria sozinho, sem lançar nada repetido.</p></div>
+        <div class="lp-feat"><span class="lp-ic" data-ic="orcamentos"></span><h3>Orçamentos</h3><p>Defina um limite para mercado, delivery ou lazer e acompanhe quanto ainda pode gastar.</p></div>
+        <div class="lp-feat"><span class="lp-ic" data-ic="metas"></span><h3>Metas</h3><p>Reserva de emergência, viagem, carro novo. O app calcula quanto guardar por mês.</p></div>
+        <div class="lp-feat"><span class="lp-ic" data-ic="bell"></span><h3>Avisos</h3><p>Lembretes de contas e faturas vencendo, e alerta quando um orçamento passa do limite.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-sec lp-alt">
+    <div class="lp-in">
+      <h2 class="lp-h2">Comece em três passos</h2>
+      <ol class="lp-steps">
+        <li><b>Crie sua conta</b><span>Só nome, e-mail e senha. Confirme pelo e-mail e pronto.</span></li>
+        <li><b>Monte suas finanças</b><span>Informe o saldo das contas, seus cartões e quanto recebe. Ou importe o extrato do banco.</span></li>
+        <li><b>Acompanhe</b><span>Lance os gastos do dia a dia e deixe o app avisar o que vence e quanto vai sobrar.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="lp-sec" id="lp-precos">
+    <div class="lp-in">
+      <h2 class="lp-h2">Um preço simples</h2>
+      <p class="lp-sub"><span class="lp-trial">7</span> dias grátis com tudo liberado. Depois, escolha como prefere pagar.</p>
+      <div class="lp-prices">
+        <div class="lp-price"><h3>Mensal</h3><div class="price"><b class="num lp-pm">R$ 19,90</b><span>/mês</span></div><p>Paga mês a mês, sem fidelidade.</p><button class="btn" data-act="land-signup">Começar teste grátis</button></div>
+        <div class="lp-price best"><div class="plan-h"><h3>Anual</h3><span class="tag lp-save">Economize R$ 39,80</span></div><div class="price"><b class="num lp-py">R$ 199,00</b><span>/ano</span></div><p>Equivale a <b class="num lp-pym">R$ 16,58</b> por mês, pagando uma vez só.</p><button class="btn primary" data-act="land-signup">Começar teste grátis</button></div>
+      </div>
+      <p class="lp-fine" style="text-align:center">Pagamento por Pix. Não existe cobrança automática: você só paga quando decidir continuar.</p>
+    </div>
+  </section>
+
+  <section class="lp-sec lp-alt">
+    <div class="lp-in lp-safe">
+      <div><h2 class="lp-h2" style="text-align:left">Seus dados são só seus</h2><p class="lp-sub" style="text-align:left;margin:0">Cada conta enxerga apenas os próprios lançamentos, protegidos por regras no banco de dados. Nem o administrador do Saldo Certo consegue ler suas finanças. O app também não pede a senha do seu banco: você decide o que registrar ou importar.</p></div>
+      <ul class="feats"><li>Acesso com e-mail confirmado e senha</li><li>Conexão criptografada (HTTPS)</li><li>Sem acesso à sua conta bancária</li><li>Exporte seus lançamentos quando quiser</li></ul>
+    </div>
+  </section>
+
+  <section class="lp-sec" id="lp-duvidas">
+    <div class="lp-in lp-faq">
+      <h2 class="lp-h2">Dúvidas frequentes</h2>
+      <details><summary>Preciso de cartão de crédito para testar?</summary><p>Não. Você cria a conta e usa tudo durante o teste grátis. Só paga se quiser continuar.</p></details>
+      <details><summary>Como funciona o pagamento?</summary><p>Pelo Pix, com QR code ou copia e cola, direto na tela de planos. O acesso é liberado assim que o pagamento é confirmado.</p></details>
+      <details><summary>Posso cancelar quando quiser?</summary><p>Sim. Não existe renovação automática: se não pagar o próximo período, o plano simplesmente não é renovado. Seus dados continuam guardados.</p></details>
+      <details><summary>O app se conecta à minha conta do banco?</summary><p>Não. Você registra os gastos ou importa o extrato que baixa no app do banco, em OFX ou CSV. Ninguém pede a sua senha bancária.</p></details>
+      <details><summary>Funciona no celular?</summary><p>Funciona no navegador do celular e do computador, com os mesmos dados. No celular dá para instalar como aplicativo, com ícone na tela inicial.</p></details>
+      <details><summary>Consigo usar com cartões e compras parceladas?</summary><p>Sim. Cadastre o cartão com os dias de fechamento e vencimento. Cada compra cai na fatura certa, e as parcelas aparecem nos meses seguintes.</p></details>
+    </div>
+  </section>
+
+  <section class="lp-final">
+    <div class="lp-in lp-final-in">
+      <h2>Coloque o seu dinheiro no lugar certo.</h2>
+      <p><span class="lp-trial">7</span> dias grátis. Leva menos de um minuto para começar.</p>
+      <div class="lp-actions" style="justify-content:center"><button class="btn lp-big lp-inv" data-act="land-signup">Criar minha conta</button><button class="btn lp-big lp-ghost" data-act="land-login">Já tenho conta</button></div>
+    </div>
+  </section>
+
+  <footer class="lp-foot"><div class="lp-in lp-foot-in"><span class="brand"><span class="logo-sm"></span>Saldo Certo</span><span class="sub">© 2026 Saldo Certo · Controle financeiro pessoal</span></div></footer>
+</div>
+
 <div class="auth" id="auth">
   <div class="auth-wrap">
     <section class="auth-brand">
+      <button class="linkish auth-back" data-act="land-back" id="authBack">← Voltar ao início</button>
       <span class="logo-lg"></span>
       <h1>Saldo Certo</h1>
       <p class="tag">Seu dinheiro organizado, do salário ao último cafezinho.</p>
@@ -607,13 +877,14 @@ async function enterApp(s){
   state=normalize(lr.data&&lr.data.data&&lr.data.data.txs?lr.data.data:blankState());
   auth="app";authErr="";renderAuth();render();setSync("ok","Salvo na nuvem");if(!locked)notifyIfNeeded();
   if(!lr.data&&!locked)flush();
+  if(needsOnboarding())setTimeout(startWizard,350);
   sb.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",id).then(()=>{});
 }
 
 async function boot(){
   renderAuth();
   if(!sb){auth="setup";renderAuth();setSync("warn","Banco não configurado");return}
-  sb.from("app_settings").select("price_monthly,price_yearly,trial_days").eq("id",1).maybeSingle().then(r=>{if(r.data){applySettings(r.data);$("#planTag").textContent=`${settings.trial_days} dias grátis para testar tudo. Depois, ${money(settings.price_monthly)} por mês.`;if(auth==="signup")renderAuth()}},()=>{});
+  sb.from("app_settings").select("price_monthly,price_yearly,trial_days").eq("id",1).maybeSingle().then(r=>{if(r.data){applySettings(r.data);renderLanding();if(auth==="signup")renderAuth()}},()=>{});
   const recovery=/type=recovery/.test(INIT_HASH), signupLink=/type=signup|type=email/.test(INIT_HASH);
   const linkErr=/error_code=([^&]+)/.exec(INIT_HASH);
   sb.auth.onAuthStateChange((ev,s)=>{
@@ -623,7 +894,7 @@ async function boot(){
   if(linkErr){clearHash();auth="login";authErr=linkErr[1]==="otp_expired"?"Esse link expirou ou já foi usado. Peça um novo.":"O link não é válido. Peça um novo.";renderAuth();return}
   if(recovery){clearHash();if(s){session=s;auth="newpw";renderAuth()}else{auth="forgot";authErr="O link de redefinição expirou. Peça um novo.";renderAuth()}return}
   if(s){clearHash();if(signupLink)setTimeout(()=>toast("E-mail confirmado! Sua conta está ativa."),400);await enterApp(s)}
-  else{auth="login";renderAuth()}
+  else{auth="landing";renderAuth()}
 }
 
 /* ---------- Telas de conta ---------- */
@@ -634,6 +905,8 @@ function go(a,err,msg){auth=a;authErr=err||"";authMsg=msg||"";renderAuth()}
 
 function renderAuth(){
   const box=$("#auth"),body=$("#authBody");
+  const land=auth==="landing";$("#landing").hidden=!land;if(land){box.hidden=true;renderLanding();renderMe();return}
+  $("#authBack").hidden=!sb||auth==="newpw";
   const show=auth!=="app"&&auth!=="demo";box.hidden=!show;
   renderMe();
   if(!show)return;
@@ -971,6 +1244,107 @@ async function grantDays(uid,days){
   toast(`${days} dias liberados`);adminRows=null;render();
 }
 
+/* ---------- Página de apresentação ---------- */
+function renderLanding(){
+  const pm=settings.price_monthly,py=settings.price_yearly,save=r2(pm*12-py);
+  document.querySelectorAll(".lp-trial").forEach(e=>e.textContent=settings.trial_days);
+  document.querySelectorAll(".lp-pm").forEach(e=>e.textContent=money(pm));
+  document.querySelectorAll(".lp-py").forEach(e=>e.textContent=money(py));
+  document.querySelectorAll(".lp-pym").forEach(e=>e.textContent=money(py/12));
+  document.querySelectorAll(".lp-save").forEach(e=>{e.textContent="Economize "+money(save);e.hidden=save<=0});
+  const pt=$("#planTag");if(pt)pt.textContent=`${settings.trial_days} dias grátis para testar tudo. Depois, ${money(pm)} por mês.`;
+  $("#lpInstall").hidden=!canInstall();
+}
+document.querySelectorAll(".lp-ic[data-ic]").forEach(e=>e.innerHTML=ICON[e.dataset.ic]||"");
+
+/* ---------- Instalar como app (PWA) ---------- */
+let installEvt=null;
+const isStandalone=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}};
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const canInstall=()=>!isStandalone()&&(!!installEvt||isIOS());
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;renderLanding();if(state)render()});
+window.addEventListener("appinstalled",()=>{installEvt=null;if(state){state.installed=true;commit("App instalado! Procure o ícone do Saldo Certo na tela inicial.")}renderLanding()});
+async function installApp(){
+  if(installEvt){installEvt.prompt();const r=await installEvt.userChoice.catch(()=>null);installEvt=null;if(r&&r.outcome==="accepted"&&state){state.installed=true;persist()}render();renderLanding();return}
+  if(isIOS())return openModal("Instalar no iPhone",`<div class="mform"><ol class="steps"><li>Abra o Saldo Certo no <b>Safari</b>.</li><li>Toque no botão <b>Compartilhar</b> (o quadrado com a seta para cima), na barra de baixo.</li><li>Role e toque em <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>. O ícone aparece junto com seus outros apps.</li></ol><div class="mfoot"><button class="btn primary" data-act="close-modal">Entendi</button></div></div>`);
+  openModal("Instalar o app",`<div class="mform"><p style="margin:0">No celular Android, abra o site no <b>Chrome</b>, toque no menu <b>⋮</b> e escolha <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.</p><p style="margin:0">No computador, use o Chrome ou o Edge e clique no ícone de instalar, no canto direito da barra de endereço.</p><div class="mfoot"><button class="btn primary" data-act="close-modal">Entendi</button></div></div>`);
+}
+function installCard(){
+  if(isStandalone())return`<div class="card" style="max-width:640px"><div class="card-h"><h2>Aplicativo</h2>${pill(["paid","Instalado"])}</div><p class="sub" style="margin:0">Você está usando o Saldo Certo como aplicativo.</p></div>`;
+  return`<div class="card" style="max-width:640px"><div class="card-h"><h2>Aplicativo no celular</h2></div><p class="sub" style="margin:0">Instale o Saldo Certo na tela inicial: abre em tela cheia, como um app, sem precisar de loja.</p><button class="btn primary" style="align-self:flex-start" data-act="install-app">Instalar o app</button></div>`;
+}
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+
+/* ---------- Primeiro acesso guiado ---------- */
+let wiz=null;
+function needsOnboarding(){return auth==="app"&&state&&!locked&&!state.onboarded&&state.txs.length===0&&!state.cards.length}
+function startWizard(){
+  const a=state.accounts;
+  wiz={step:1,acc:a[0]?a[0].name:"Conta corrente",bal:"",cash:"",hasCard:false,card:{name:"",limit:"",close:3,due:10},income:"",day:5};
+  showWiz();
+}
+function wizSave(){
+  const v=id=>{const e=document.getElementById(id);return e?e.value:""};
+  if(wiz.step===1){wiz.acc=v("wz-acc").trim()||"Conta corrente";wiz.bal=v("wz-bal");wiz.cash=v("wz-cash")}
+  if(wiz.step===2&&wiz.hasCard){wiz.card={name:v("wz-cname").trim(),limit:v("wz-climit"),close:parseInt(v("wz-cclose"))||3,due:parseInt(v("wz-cdue"))||10}}
+  if(wiz.step===3){wiz.income=v("wz-inc");wiz.day=parseInt(v("wz-day"))||5}
+}
+function showWiz(err){
+  const s=wiz.step,first=(profile&&profile.name||"").split(" ")[0];
+  const dots=`<div class="wz-dots" aria-label="Passo ${s} de 3">${[1,2,3].map(i=>`<i class="${i<=s?"on":""}"></i>`).join("")}<span>Passo ${s} de 3</span></div>`;
+  let body="";
+  if(s===1)body=`<p class="wz-lead">${first?`Olá, ${esc(first)}! `:""}Vamos montar suas finanças em menos de um minuto. Comece pelo dinheiro que você tem hoje.</p>
+    <div class="two"><div class="field"><label for="wz-acc">Conta principal</label><input id="wz-acc" value="${esc(wiz.acc)}" placeholder="Ex.: Nubank, Itaú, Caixa"></div><div class="field"><label for="wz-bal">Saldo hoje (R$)</label><input id="wz-bal" inputmode="decimal" value="${esc(wiz.bal)}" placeholder="0,00"></div></div>
+    <div class="field"><label for="wz-cash">Dinheiro na carteira (R$)</label><input id="wz-cash" inputmode="decimal" value="${esc(wiz.cash)}" placeholder="0,00"></div>
+    <p class="sub" style="margin:0">Pode deixar em branco e ajustar depois em Ajustes. Para mais contas, use Ajustes também.</p>`;
+  if(s===2)body=`<p class="wz-lead">Você usa cartão de crédito?</p>
+    <div class="seg" role="group" aria-label="Usa cartão"><button type="button" data-act="wz-card" data-v="1" aria-pressed="${wiz.hasCard}">Sim, uso</button><button type="button" data-act="wz-card" data-v="0" aria-pressed="${!wiz.hasCard}">Não uso</button></div>
+    ${wiz.hasCard?`<div class="two"><div class="field"><label for="wz-cname">Nome do cartão</label><input id="wz-cname" value="${esc(wiz.card.name)}" placeholder="Ex.: Nubank"></div><div class="field"><label for="wz-climit">Limite (R$)</label><input id="wz-climit" inputmode="decimal" value="${esc(wiz.card.limit)}" placeholder="5.000,00"></div></div>
+    <div class="two"><div class="field"><label for="wz-cclose">Dia do fechamento</label><input id="wz-cclose" type="number" min="1" max="31" value="${wiz.card.close}"></div><div class="field"><label for="wz-cdue">Dia do vencimento</label><input id="wz-cdue" type="number" min="1" max="31" value="${wiz.card.due}"></div></div>
+    <p class="sub" style="margin:0">Os dias aparecem na fatura do cartão ou no app do banco. Assim cada compra cai na fatura certa.</p>`:`<p class="sub" style="margin:0">Sem problema. Se começar a usar, é só cadastrar na aba Cartões.</p>`}`;
+  if(s===3)body=`<p class="wz-lead">Quanto você recebe por mês?</p>
+    <div class="two"><div class="field"><label for="wz-inc">Salário ou renda (R$)</label><input id="wz-inc" inputmode="decimal" value="${esc(wiz.income)}" placeholder="0,00"></div><div class="field"><label for="wz-day">Dia em que cai</label><input id="wz-day" type="number" min="1" max="31" value="${wiz.day}"></div></div>
+    <p class="sub" style="margin:0">Vamos lançar como receita prevista nos próximos 12 meses. Isso deixa a previsão do saldo certa desde já. Deixe em branco se a renda varia muito.</p>`;
+  openModal(s===1?"Bem-vindo ao Saldo Certo":s===2?"Cartão de crédito":"Sua renda",`<form id="wizForm" class="mform">${dots}${body}${err?`<p class="form-err">${esc(err)}</p>`:""}
+    <div class="mfoot">${s===1?`<button type="button" class="btn ghost" data-act="wz-skip" style="margin-right:auto">Pular, faço depois</button>`:`<button type="button" class="btn" data-act="wz-back" style="margin-right:auto">Voltar</button>`}<button class="btn primary">${s===3?"Concluir":"Continuar"}</button></div></form>`);
+}
+function wizNext(){
+  wizSave();
+  if(wiz.step===2&&wiz.hasCard){const c=wiz.card;if(!c.name)return showWiz("Dê um nome para o cartão.");if(!(parseMoney(c.limit)>0))return showWiz("Informe o limite do cartão.")}
+  if(wiz.step<3){wiz.step++;return showWiz()}
+  finishWizard();
+}
+function finishWizard(){
+  const w=wiz,a=state.accounts;
+  const bal=parseMoney(w.bal),cash=parseMoney(w.cash);
+  if(a[0]){a[0].name=w.acc;if(isFinite(bal))a[0].initial=r2(bal)}else state.accounts.push({id:"cc",name:w.acc,initial:isFinite(bal)?r2(bal):0});
+  const cart=state.accounts.find(x=>x.id==="cart");if(cart&&isFinite(cash))cart.initial=r2(cash);
+  if(w.hasCard)state.cards.push({id:uid(),name:w.card.name,limit:r2(parseMoney(w.card.limit)),closeDay:Math.min(31,Math.max(1,w.card.close)),dueDay:Math.min(31,Math.max(1,w.card.due)),color:CARD_COLORS[0][0]});
+  const inc=parseMoney(w.income);
+  if(inc>0){const d=Math.min(31,Math.max(1,w.day));let [y,m]=TODAY.split("-").map(Number);m-=1;
+    const mk=(yy,mm)=>{const x=new Date(yy,mm,1),dim=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(Math.min(d,dim))}`};
+    let start=mk(y,m)<TODAY?1:0;
+    for(let i=0;i<12;i++)state.txs.push({id:uid(),type:"in",desc:"Salário",amount:r2(inc),cat:"salario",acc:state.accounts[0].id,date:mk(y,m+start+i),paid:false});
+  }
+  state.onboarded=true;wiz=null;closeModal();view="painel";commit("Tudo pronto! Agora é só lançar seus gastos.");
+}
+
+function checklistCard(){
+  if(auth!=="app"||!state||state.checklistHidden)return"";
+  const items=[
+    {done:state.onboarded||state.accounts.some(a=>a.initial),t:"Informar o saldo das suas contas",act:'data-act="wz-open"'},
+    {done:state.txs.some(t=>t.type==="out"),t:"Registrar seu primeiro gasto",act:'data-act="new-tx"'},
+    {done:Object.keys(state.budgets).length>0,t:"Definir um orçamento para uma categoria",act:'data-act="go" data-v="orcamentos"'},
+    {done:state.goals.length>0,t:"Criar uma meta de economia",act:'data-act="go" data-v="metas"'},
+    {done:isStandalone()||!!state.installed,t:"Instalar o app no celular",act:'data-act="install-app"'}
+  ];
+  const n=items.filter(i=>i.done).length;
+  if(n===items.length)return"";
+  return`<div class="card checklist"><div class="card-h"><h2>Primeiros passos</h2><span class="sub">${n} de ${items.length} concluídos</span><button class="btn sm ghost" data-act="checklist-hide">Ocultar</button></div>
+  <div class="bar ok"><i style="width:${n/items.length*100}%"></i></div>
+  <ul class="ck">${items.map(i=>`<li class="${i.done?"done":""}">${i.done?`<span class="ck-i" aria-hidden="true"></span><span>${i.t}</span>`:`<button class="ck-go" ${i.act}><span class="ck-i" aria-hidden="true"></span><span>${i.t}</span><span class="ck-arrow" aria-hidden="true">→</span></button>`}</li>`).join("")}</ul></div>`;
+}
+
 /* ---------- Cálculos ---------- */
 const sign=t=>t.type==="in"?t.amount:-t.amount;
 const isFat=t=>t.cat==="_fatura";
@@ -1111,7 +1485,7 @@ function vPainel(){
 
   const goalsCard=state.goals.length?`<div class="card ${cardsCard?"span-6":"span-12"}"><div class="card-h"><h2>Metas</h2><button class="btn sm ghost" data-act="go" data-v="metas">Ver todas</button></div><div class="goals">${state.goals.slice(0,3).map(g=>{const pc=Math.min(100,g.saved/g.target*100);return`<div class="goal"><div class="budget"><div class="top"><span>${esc(g.name)}</span><span class="num">${pc.toFixed(0)}%</span></div><div class="bar"><i style="width:${pc}%"></i></div><div class="sub num">${money(g.saved)} de ${money(g.target)}</div></div></div>`}).join("")}</div></div>`:"";
 
-  return kpis+`<div class="grid">${flow}${catCard}${payCard}${budCard}${cardsCard}${goalsCard}</div>`;
+  return checklistCard()+kpis+`<div class="grid">${flow}${catCard}${payCard}${budCard}${cardsCard}${goalsCard}</div>`;
 }
 
 function budgetRow({c,l,s}){
@@ -1119,7 +1493,7 @@ function budgetRow({c,l,s}){
   return`<div class="budget"><div class="top"><span><span class="chip"><i style="background:${catOf(c).color}"></i>${esc(catOf(c).name)}</span></span><span class="num">${money(s)} <span class="sub">/ ${money(l)}</span></span></div><div class="bar ${cls}"><i style="width:${Math.min(100,pc)}%"></i></div><div class="sub">${pc>100?`<span style="color:var(--neg);font-weight:600">${money(s-l)} acima do limite</span>`:`Restam ${money(l-s)}`}</div></div>`;
 }
 
-function niceMax(v){if(v<=0)return 1000;const e=Math.pow(10,Math.floor(Math.log10(v))),n=v/e;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*e}
+function niceMax(v){if(v<=1)return 1000;const e=Math.pow(10,Math.floor(Math.log10(v))),n=v/e;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*e}
 function flowChart(ms){
   const W=640,H=230,L=52,R=8,T=10,B=26,iw=W-L-R,ih=H-T-B;
   const max=niceMax(Math.max(...ms.map(m=>Math.max(m.i,m.o)),1));
@@ -1299,6 +1673,8 @@ function vContas(){
     <p class="sub" style="margin:0">Receba um aviso uma vez por dia, ao abrir o app, quando houver contas vencendo, faturas para pagar ou orçamento estourado. Os avisos também ficam sempre no sino, no topo.</p>
     ${notif==="default"?`<button class="btn primary" style="align-self:flex-start" data-act="notif-on">Ativar avisos</button>`:notif==="denied"?`<p class="note">Os avisos foram bloqueados neste navegador. Para liberar, clique no cadeado ao lado do endereço do site e permita notificações.</p>`:notif==="unsupported"?`<p class="note">Este navegador não suporta avisos. Os alertas continuam aparecendo no sino.</p>`:""}
   </div>
+  <h2 class="sec-h">Aplicativo</h2>
+  ${installCard()}
   ${auth==="app"?`
   <h2 class="sec-h">Sua conta</h2>
   <div class="card acc-panel"><div class="card-h"><h2>Perfil e senha</h2><button class="btn sm" data-act="logout">Sair</button></div>
@@ -1553,7 +1929,7 @@ document.addEventListener("click",e=>{
     case"notif-on":if("Notification" in window)Notification.requestPermission().then(p=>{render();if(p==="granted"){toast("Avisos ativados");try{localStorage.removeItem("sc-notified")}catch(e){}notifyIfNeeded()}});break;
     case"imp-reset":imp=null;render();break;
     case"imp-commit":if(imp&&imp.rows)commitImport();break;
-    case"demo":state=normalize(demoState());auth="demo";renderAuth();render();break;
+    case"demo":state=normalize(demoState());auth="demo";renderAuth();render();window.scrollTo(0,0);break;
     case"exit-demo":state=null;closeDrawer();closeModal();$("#view").innerHTML="";go(sb?"signup":"setup");break;
     case"logout":doLogout();break;
     case"to-login":go("login");break;
@@ -1561,6 +1937,17 @@ document.addEventListener("click",e=>{
     case"to-forgot":{const em=$("#l-email");if(em&&em.value)pendingEmail=em.value.trim();go("forgot");break}
     case"resend":{const em=$("#l-email");if(em&&em.value)pendingEmail=em.value.trim().toLowerCase();doResend();break}
     case"admin-reload":adminRows=null;render();break;
+    case"land-signup":go("signup");break;
+    case"land-login":go("login");break;
+    case"land-back":go("landing");break;
+    case"land-top":e.preventDefault();$("#landing").scrollTo({top:0,behavior:"smooth"});break;
+    case"land-scroll":{const el=document.getElementById(b.dataset.to);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});break}
+    case"install-app":installApp();break;
+    case"wz-open":if(state)startWizard();break;
+    case"wz-card":wizSave();wiz.hasCard=b.dataset.v==="1";showWiz();break;
+    case"wz-back":wizSave();wiz.step=Math.max(1,wiz.step-1);showWiz();break;
+    case"wz-skip":if(state){state.onboarded=true;wiz=null;closeModal();commit("Tudo bem! Você pode ajustar suas contas em Ajustes quando quiser.")}break;
+    case"checklist-hide":state.checklistHidden=true;commit("Primeiros passos ocultados");break;
     case"sub-pay":payModal(b.dataset.period);break;
     case"sub-notify":notifyPayment();break;
     case"sub-refresh":refreshSub();break;
@@ -1611,6 +1998,7 @@ document.addEventListener("submit",e=>{
   if(f.id==="pwForm"){e.preventDefault();changePassword();return}
   if(f.id==="cardForm"){e.preventDefault();saveCard();return}
   if(f.id==="billingForm"){e.preventDefault();saveBilling();return}
+  if(f.id==="wizForm"){e.preventDefault();wizNext();return}
   if(f.id==="payForm"){e.preventDefault();savePayInv();return}
   if(f.id==="impMapForm"){e.preventDefault();const c=imp.csv;c.map={date:+$("#impMapDate").value,desc:+$("#impMapDesc").value,val:+$("#impMapVal").value};c.invert=$("#impInvert").checked;const r=rowsFromCSV(c);if(r.length){imp.err="";finishRows(r)}else{imp.rows=null;imp.err="Ainda não conseguimos ler datas e valores com essas colunas."}render();return}
   if(f.id==="catForm"){e.preventDefault();const name=$("#nc-name").value.trim();if(!name)return toast("Dê um nome para a categoria.");const type=$("#nc-type").value;if(CATS[type].some(([,n])=>n.toLowerCase()===name.toLowerCase()))return toast("Já existe uma categoria com esse nome.");state.customCats.push({id:"c_"+uid(),name,color:$("#nc-color").value,type});commit("Categoria criada");return}
