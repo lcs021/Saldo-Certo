@@ -76,6 +76,10 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .btn.sm{padding:5px 10px;font-size:13px}
 .btn.ghost{border-color:transparent;background:none}
 .btn.danger{color:var(--neg)}
+.cc-btns{display:flex;gap:6px;flex-wrap:wrap}
+.cd-warn{background:var(--neg-soft);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.45}
+.cd-warn b{color:var(--neg)}
+.cd-check{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 .btn svg{width:16px;height:16px}
 
 .banner{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:12px 16px;border-radius:var(--r);background:var(--accent-soft);color:var(--fg);margin-bottom:18px}
@@ -2110,7 +2114,7 @@ function vLanc(){
 /* ---------- Cartões ---------- */
 function vCartoes(){
   const k=mkey(cur.y,cur.m);
-  if(!state.cards.length)return`<div class="card empty-state"><div class="cc-visual" style="--cc:#1F4FB8;max-width:300px"><span>Seu cartão</span><b class="num">R$ 0,00</b><small>limite disponível</small></div><h2>Controle seus cartões de crédito</h2><p class="sub">Cadastre o cartão com o limite e os dias de fechamento e vencimento. As compras caem sozinhas na fatura certa, inclusive as parceladas.</p><button class="btn primary" data-act="card-new">${ICON.plus}Adicionar cartão</button></div>`;
+  if(!state.cards.length)return`<div class="card empty-state"><div class="cc-visual" style="--cc:#1F4FB8;width:100%;max-width:300px;flex:none"><span>Seu cartão</span><b class="num">R$ 0,00</b><small>limite disponível</small></div><h2>Controle seus cartões de crédito</h2><p class="sub">Cadastre o cartão com o limite e os dias de fechamento e vencimento. As compras caem sozinhas na fatura certa, inclusive as parceladas.</p><button class="btn primary" data-act="card-new">${ICON.plus}Adicionar cartão</button></div>`;
   return`<p class="sub" style="margin:0 0 12px">Mostrando as faturas que vencem em <b>${MONTHS[cur.m]} de ${cur.y}</b>. Use as setas do mês para ver outras faturas.</p>
   <div class="cc-list">${state.cards.map(c=>cardBlock(c,k)).join("")}</div>
   <button class="btn" style="margin-top:14px" data-act="card-new">${ICON.plus}Adicionar cartão</button>`;
@@ -2124,7 +2128,7 @@ function cardBlock(c,k){
       <div class="cc-visual" style="--cc:${esc(c.color)}"><span>${esc(c.name)}</span><b class="num">${money(c.limit-u)}</b><small>limite disponível</small></div>
       <div class="budget"><div class="top"><span>Limite usado</span><span class="num">${pc.toFixed(0)}%</span></div><div class="bar ${pc>=90?"over":pc>=70?"warn":""}"><i style="width:${pc}%"></i></div><div class="sub num">${money(u)} de ${money(c.limit)}</div></div>
       <div class="sub">Fecha dia ${c.closeDay} · vence dia ${c.dueDay}</div>
-      <button class="btn sm" data-act="card-edit" data-card="${c.id}">${ICON.edit}Editar cartão</button>
+      <div class="cc-btns"><button class="btn sm" data-act="card-edit" data-card="${c.id}">${ICON.edit}Editar cartão</button><button class="btn sm ghost danger" data-act="card-del-ask" data-card="${c.id}">${ICON.trash}Excluir</button></div>
     </div>
     <div class="cc-main">
       <div class="card-h"><h2>Fatura de ${MONTHS[cur.m]}</h2>${pill(st)}</div>
@@ -2607,8 +2611,30 @@ function cardForm(c){
     <div class="two"><div class="field"><label for="cd-close">Dia do fechamento</label><input id="cd-close" type="number" min="1" max="31" value="${c?c.closeDay:3}"></div><div class="field"><label for="cd-due">Dia do vencimento</label><input id="cd-due" type="number" min="1" max="31" value="${c?c.dueDay:10}"></div></div>
     <div class="field"><label>Cor</label><div class="swatches">${CARD_COLORS.map(([hex,n],i)=>`<label class="sw" title="${n}"><input type="radio" name="cd-color" value="${hex}" ${(c?c.color===hex:i===0)?"checked":""}><span style="background:${hex}"></span></label>`).join("")}</div></div>
     <p class="form-err" id="cdErr" hidden></p>
-    <div class="mfoot">${c?(hasTx?`<span class="sub" style="margin-right:auto">Para excluir, apague antes as compras deste cartão.</span>`:`<button type="button" class="btn danger" data-act="card-del" data-card="${c.id}" style="margin-right:auto">Excluir cartão</button>`):""}<button type="button" class="btn" data-act="close-modal">Cancelar</button><button class="btn primary">${c?"Salvar":"Adicionar cartão"}</button></div>
+    <div class="mfoot">${c?`<button type="button" class="btn danger" data-act="card-del-ask" data-card="${c.id}" style="margin-right:auto">${ICON.trash}Excluir cartão</button>`:""}<button type="button" class="btn" data-act="close-modal">Cancelar</button><button class="btn primary">${c?"Salvar":"Adicionar cartão"}</button></div>
   </form>`);
+}
+function cardDelAsk(c){
+  const tx=state.txs.filter(t=>t.card===c.id),tot=tx.reduce((a,t)=>a+t.amount,0),fut=tx.filter(t=>t.date>TODAY).length;
+  const pays=state.txs.filter(t=>t.inv&&t.inv.card===c.id).length;
+  openModal("Excluir cartão",`<form id="cardDelForm" class="mform" data-card="${c.id}">
+    <p style="margin:0">Excluir o cartão <b>${esc(c.name)}</b>?</p>
+    ${tx.length?`<div class="cd-warn"><b>${tx.length} ${tx.length===1?"compra será apagada":"compras serão apagadas"}</b> junto com o cartão, somando ${money(tot)}${fut?`, incluindo ${fut} ${fut===1?"parcela futura":"parcelas futuras"}`:""}. Essas compras somem dos relatórios e dos orçamentos.</div>`:`<p class="sub" style="margin:0">Este cartão não tem compras registradas.</p>`}
+    ${pays?`<p class="sub" style="margin:0">Os ${pays===1?"pagamento de fatura já feito continua":pays+" pagamentos de fatura já feitos continuam"} no histórico da conta, porque esse dinheiro realmente saiu dela.</p>`:""}
+    ${tx.length?`<label class="cd-check"><input type="checkbox" id="cdConfirm"> Entendo que isso não pode ser desfeito</label>`:""}
+    <p class="form-err" id="cdDelErr" hidden></p>
+    <div class="mfoot"><button type="button" class="btn" data-act="close-modal">Cancelar</button><button class="btn danger-solid">Excluir cartão</button></div>
+  </form>`);
+}
+function cardDelete(id){
+  const c=cardOf(id);if(!c)return closeModal();
+  const box=$("#cdConfirm");if(box&&!box.checked){$("#cdDelErr").textContent="Marque a confirmação para excluir.";$("#cdDelErr").hidden=false;return}
+  const n=state.txs.filter(t=>t.card===id).length;
+  state.txs=state.txs.filter(t=>t.card!==id);
+  for(const t of state.txs)if(t.inv&&t.inv.card===id)delete t.inv;
+  state.cards=state.cards.filter(x=>x.id!==id);
+  if(typeof filt==="object"&&String(filt.acc||"").endsWith(id))filt.acc="";
+  closeModal();commit(n?`Cartão excluído com ${n} ${n===1?"compra":"compras"}`:"Cartão excluído");
 }
 function saveCard(){
   const name=$("#cd-name").value.trim(),limit=parseMoney($("#cd-limit").value),close=parseInt($("#cd-close").value),due=parseInt($("#cd-due").value),color=(document.querySelector('input[name="cd-color"]:checked')||{}).value||CARD_COLORS[0][0];
@@ -2668,7 +2694,7 @@ document.addEventListener("click",e=>{
     case"del-acc":state.accounts=state.accounts.filter(x=>x.id!==id);commit("Conta removida");break;
     case"card-new":cardForm();break;
     case"card-edit":cardForm(cardOf(b.dataset.card));break;
-    case"card-del":state.cards=state.cards.filter(c=>c.id!==b.dataset.card);closeModal();commit("Cartão excluído");break;
+    case"card-del-ask":{const c=cardOf(b.dataset.card);if(c)cardDelAsk(c);break}
     case"pay-inv":payInvForm(b.dataset.card,b.dataset.key);break;
     case"alerts-toggle":alertsOpen=!alertsOpen;renderBell();break;
     case"alert-go":alertsOpen=false;if(b.dataset.date){const [y,m]=b.dataset.date.split("-").map(Number);cur={y,m:m-1}}view=b.dataset.v;render();window.scrollTo(0,0);break;
@@ -2758,6 +2784,7 @@ document.addEventListener("submit",e=>{
   if(f.id==="loginForm"){e.preventDefault();doLogin();return}
   if(f.id==="pwForm"){e.preventDefault();changePassword();return}
   if(f.id==="cardForm"){e.preventDefault();saveCard();return}
+  if(f.id==="cardDelForm"){e.preventDefault();cardDelete(f.dataset.card);return}
   if(f.id==="invForm"){e.preventDefault();saveInv();return}
   if(f.id==="invMoveForm"){e.preventDefault();saveInvMove();return}
   if(f.id==="simForm"){e.preventDefault();readSim();return}
