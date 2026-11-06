@@ -1043,7 +1043,16 @@ document.querySelectorAll(".logo-sm,.logo-lg").forEach(e=>e.innerHTML=LOGO);
 const INIT_HASH=location.hash;
 const CFG=window.SALDO_CONFIG||{};
 const configured=!!(window.supabase&&CFG.supabaseUrl&&CFG.supabaseAnonKey&&!/SEU-PROJETO|COLE_AQUI/.test(CFG.supabaseUrl+CFG.supabaseAnonKey));
-const sb=configured?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey):null;
+// lock simples: evita que a sessão fique presa quando o navegador segura a trava de outra aba
+const sb=configured?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:async(name,timeout,fn)=>await fn()}}):null;
+const withTO=(p,ms,what)=>Promise.race([Promise.resolve(p),new Promise((_,rej)=>setTimeout(()=>rej(new Error("tempo esgotado ao "+what)),ms))]);
+function clearAuthStorage(){try{for(const k of Object.keys(localStorage))if(/^sb-.*-auth-token/.test(k))localStorage.removeItem(k)}catch(e){}}
+async function safeEnter(s){
+  try{await withTO(enterApp(s),20000,"carregar sua conta")}
+  catch(e){console.error("[Saldo Certo] erro ao abrir a conta",e);
+    if(auth==="app")return;
+    auth="stuck";authErr=String(e&&e.message||e);renderAuth()}
+}
 const APP_URL=location.origin+location.pathname;
 
 let state=null;          // dados financeiros abertos
@@ -1119,10 +1128,12 @@ async function boot(){
   sb.auth.onAuthStateChange((ev,s)=>{
     if(ev==="PASSWORD_RECOVERY"){session=s;auth="newpw";setTimeout(renderAuth,0)}
   });
-  const {data:{session:s}}=await sb.auth.getSession();
+  let s=null;
+  try{const r=await withTO(sb.auth.getSession(),10000,"verificar sua sessão");s=r&&r.data?r.data.session:null}
+  catch(e){console.error("[Saldo Certo] getSession",e);auth="stuck";authErr=String(e&&e.message||e);renderAuth();return}
   if(linkErr){clearHash();auth="login";authErr=linkErr[1]==="otp_expired"?"Esse link expirou ou já foi usado. Peça um novo.":"O link não é válido. Peça um novo.";renderAuth();return}
   if(recovery){clearHash();if(s){session=s;auth="newpw";renderAuth()}else{auth="forgot";authErr="O link de redefinição expirou. Peça um novo.";renderAuth()}return}
-  if(s){clearHash();if(signupLink)setTimeout(()=>toast("E-mail confirmado! Sua conta está ativa."),400);await enterApp(s)}
+  if(s){clearHash();if(signupLink)setTimeout(()=>toast("E-mail confirmado! Sua conta está ativa."),400);await safeEnter(s)}
   else{auth="landing";renderAuth()}
 }
 
@@ -1147,6 +1158,7 @@ function renderAuth(){
   let h="";
   switch(auth){
     case"loading":h=`<h2>Um instante…</h2><p class="sub">Verificando sua sessão.</p>`;break;
+    case"stuck":h=`<h2>Não conseguimos abrir sua conta</h2><p class="sub">A conexão com o servidor demorou ou falhou. Seus dados estão guardados, nada foi perdido.</p><p class="sub" style="font-size:12px;opacity:.8">Detalhe: ${esc(authErr)}</p><button class="btn primary" data-act="stuck-retry">Tentar de novo</button><button class="btn" data-act="stuck-relogin">Sair e entrar de novo</button>`;break;
     case"setup":h=`<h2>Falta conectar o banco</h2><p class="note">Preencha o arquivo <b>config.js</b> com a URL e a chave pública do seu projeto Supabase. O passo a passo está no arquivo LEIA-ME.</p>${demoBtn}`;break;
     case"login":h=`<h2>Entrar</h2>
       <form id="loginForm" novalidate>
@@ -1210,7 +1222,7 @@ async function doLogin(){
   pendingEmail=email;busy("loginBtn",true,"Entrando…");
   const {data,error}=await sb.auth.signInWithPassword({email,password:pw});
   if(error){busy("loginBtn",false,"Entrar");const m=trErr(error.message);if(/confirm/i.test(m))return go("login",m);return formErr(m)}
-  await enterApp(data.session);
+  await safeEnter(data.session);
 }
 async function doSignup(){
   const name=$("#s-name").value.trim(),email=$("#s-email").value.trim().toLowerCase(),pw=$("#s-pw").value,pw2=$("#s-pw2").value;
@@ -1224,7 +1236,7 @@ async function doSignup(){
   if(error){busy("signupBtn",false,"Criar conta");return formErr(trErr(error.message))}
   pendingEmail=email;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0)return go("login","Este e-mail já tem uma conta. Entre ou redefina a senha.");
-  if(data.session)return enterApp(data.session); // confirmação desligada no Supabase
+  if(data.session)return safeEnter(data.session); // confirmação desligada no Supabase
   go("check-email");
 }
 let resendAt=0;
@@ -1252,7 +1264,7 @@ async function doNewPw(){
   const {error}=await sb.auth.updateUser({password:pw});
   if(error){busy("newpwBtn",false,"Salvar nova senha");return formErr(trErr(error.message))}
   toast("Senha redefinida. Você já está dentro.");
-  const {data:{session:s}}=await sb.auth.getSession();await enterApp(s);
+  const {data:{session:s}}=await sb.auth.getSession();await safeEnter(s);
 }
 async function doLogout(){
   clearTimeout(saveTimer);if(auth==="app")await flush();
@@ -2768,7 +2780,7 @@ async function famInvite(){
   if(error)return toast(/duplicate|unique/i.test(error.message)?"Essa pessoa já foi convidada.":/row-level|policy/i.test(error.message)?"Não deu para convidar. Confira se o plano Família está ativo e se ainda há vagas.":trErr(error.message));
   famList=null;render();toast("Convite enviado para "+email);
 }
-async function famReload(msg){await enterApp(session);if(msg)toast(msg)}
+async function famReload(msg){await safeEnter(session);if(msg)toast(msg)}
 
 /* ---------- Indique e ganhe ---------- */
 const REF_KEY="sc-ref";
@@ -3355,6 +3367,8 @@ document.addEventListener("click",e=>{
     case"del-acc":state.accounts=state.accounts.filter(x=>x.id!==id);commit("Conta removida");break;
     case"card-new":cardForm();break;
     case"card-edit":cardForm(cardOf(b.dataset.card));break;
+    case"stuck-retry":location.reload();break;
+    case"stuck-relogin":clearAuthStorage();try{sb&&withTO(sb.auth.signOut({scope:"local"}),3000,"sair").catch(()=>{}).finally(()=>location.reload())}catch(e){location.reload()}break;
     case"del-series":{const t=state.txs.find(x=>x.id===id);if(!t){closeModal();break}const L=seriesOf(t),mode=b.dataset.mode,ids=mode==="all"?L.map(x=>x.id):mode==="next"?L.slice(L.indexOf(t)).map(x=>x.id):[t.id];removeTxs(ids);closeModal();commit(ids.length>1?`${ids.length} parcelas apagadas`:"Parcela apagada");break}
     case"inv-clear":{const c=cardOf(b.dataset.card);if(c)invClearAsk(c,b.dataset.key);break}
     case"card-del-ask":{const c=cardOf(b.dataset.card);if(c)cardDelAsk(c);break}
