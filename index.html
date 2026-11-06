@@ -76,6 +76,33 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .btn.sm{padding:5px 10px;font-size:13px}
 .btn.ghost{border-color:transparent;background:none}
 .btn.danger{color:var(--neg)}
+.pl-start{display:flex;flex-direction:column;gap:10px;max-width:640px}
+.pl-start h2{margin:0}
+.pl-add{display:grid;grid-template-columns:minmax(0,1fr) 120px auto auto;gap:8px;align-items:center;margin-bottom:6px}
+.pl-add input:not([type=checkbox]){padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);font:inherit;min-width:0}
+.pl-add input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.pl-first{grid-template-columns:minmax(0,1fr) 160px auto}
+.pl-add.pl-narrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin:14px 0 0}.pl-narrow input[name=d]{grid-column:1/-1}.pl-narrow .btn{justify-self:end}
+.pl-row.pl-inc{grid-template-columns:minmax(0,1fr) auto auto}
+.pl-fix{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer}
+.pl-cards{margin-top:12px}
+.pl-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.pl-list .pl-row:first-child,.card .list>.pl-row:first-child{border-top:0}
+.pl-row .t{min-width:0}.pl-d{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-row.is-paid .pl-d{color:var(--muted);text-decoration:line-through}
+.pl-chk{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;color:#fff;font-size:14px;font-weight:700;cursor:pointer;padding:0}
+.pl-chk.on{background:var(--pos);border-color:var(--pos)}
+span.pl-chk{cursor:default}
+.pl-tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--surface-2);color:var(--muted);margin-right:2px}
+.pl-bar{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--surface-2);gap:2px}
+.pl-bar i{display:block;height:100%}
+.pl-bar i.p,.pl-leg i.p{background:var(--accent)}.pl-bar i.a,.pl-leg i.a{background:var(--warn,#D9A21B)}.pl-bar i.s,.pl-leg i.s{background:var(--pos)}
+.pl-leg{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:13px;color:var(--muted)}
+.pl-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.pl-scope{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}.pl-scope label{display:flex;gap:8px;align-items:center;font-size:14px}
+.pl-limits{margin-top:16px}.pl-limits summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none}
+.pl-limits summary::-webkit-details-marker{display:none}.pl-limits summary h2{margin:0}.pl-limits[open] summary{margin-bottom:10px}
+@media (max-width:700px){.pl-add{grid-template-columns:minmax(0,1fr) 110px}.pl-add .pl-fix{grid-column:1}.pl-add .btn{grid-column:2}.pl-first{grid-template-columns:minmax(0,1fr) 120px}.pl-first .btn{grid-column:1/-1}}
 .link-btn{background:none;border:0;padding:0;font:inherit;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .del-opts{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .del-opts .btn{justify-content:center;width:100%}
@@ -966,7 +993,7 @@ const ICON={
   chevL:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>',
   chevR:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'
 };
-const VIEWS=[["painel","Painel"],["lancamentos","Lançamentos"],["cartoes","Cartões"],["orcamentos","Orçamentos"],["metas","Metas"],["investimentos","Investimentos"],["dividas","Dívidas"],["relatorios","Relatórios"],["assinatura","Plano"],["contas","Ajustes"],["admin","Admin"]];
+const VIEWS=[["painel","Painel"],["lancamentos","Lançamentos"],["cartoes","Cartões"],["orcamentos","Orçamento"],["metas","Metas"],["investimentos","Investimentos"],["relatorios","Relatórios"],["assinatura","Plano"],["contas","Ajustes"],["admin","Admin"]];
 const HIDDEN_VIEWS=[["importar","Importar extrato"]];
 const viewName=id=>([...VIEWS,...HIDDEN_VIEWS].find(v=>v[0]===id)||["","Saldo Certo"])[1];
 
@@ -1020,11 +1047,10 @@ function demoState(){
     goals:[{id:uid(),name:"Reserva de emergência",target:15000,saved:6200,due:mkey(today.getFullYear()+1,5)},{id:uid(),name:"Viagem de férias",target:6000,saved:1850,due:mkey(today.getFullYear()+1,0)}],
     customCats:[{id:"pets",name:"Pets",color:"#9C7A3C",type:"out"}],catEdits:{},rules:{},
     invCfg:{cdi:15,ipca:4.5},
-    debts:[
-      {id:"d1",dir:"owe",person:"Banco Inter",desc:"Empréstimo pessoal",total:6000,n:12,first:addM(-5,15),payments:[0,1,2,3,4].map(i=>({id:"dp"+i,date:addM(-5+i,15),amount:500,old:true}))},
-      {id:"d2",dir:"owed",person:"João",desc:"Emprestei para o conserto do carro",total:900,n:3,first:addM(-1,10),payments:[]},
-      {id:"d3",dir:"owe",person:"Loja de móveis",desc:"Sofá no carnê",total:1800,n:6,first:addM(-6,5),payments:[0,1,2,3,4,5].map(i=>({id:"dq"+i,date:addM(-6+i,5),amount:300,old:true}))}
-    ],
+    debts:[],
+    plan:{cards:true,paid:{},skip:{},
+      income:[{id:"pi1",desc:"Salário",amount:4800,fixed:true,from:mkey(today.getFullYear()-1,0)}],
+      items:[{id:"pa1",desc:"Aluguel",amount:1450,fixed:true,from:mkey(today.getFullYear()-1,0)},{id:"pa2",desc:"Empréstimo Banco Inter (parcela)",amount:500,fixed:true,from:mkey(today.getFullYear()-1,0)},{id:"pa3",desc:"Internet e celular",amount:189.9,fixed:true,from:mkey(today.getFullYear()-1,0)},{id:"pa4",desc:"Carnê do sofá",amount:300,fixed:false,month:mkey(today.getFullYear(),today.getMonth())}]},
     invs:[
       {id:"i1",name:"Reserva de emergência",type:"cdb",inst:"Nubank",rateKind:"cdi",rate:102,maturity:"",liq:"diaria",moves:[{id:"m1",kind:"aporte",amount:5000,date:dago(260)},{id:"m2",kind:"aporte",amount:800,date:dago(120)},{id:"m3",kind:"aporte",amount:400,date:dago(28)}]},
       {id:"i2",name:"Tesouro IPCA+ 2035",type:"tesouro",inst:"Tesouro Direto",rateKind:"ipca",rate:6.8,maturity:"2035-05-15",liq:"venc",moves:[{id:"m4",kind:"aporte",amount:3000,date:dago(420)}]},
@@ -1406,7 +1432,7 @@ function subBanner(){
   if(s.kind==="pro"&&s.days<=5)return`<div class="banner warn"><p><b>Seu plano vence em ${diasTxt(s.days)}.</b> Renove agora e os dias que faltam são somados ao novo período.</p><button class="btn sm primary" data-act="go" data-v="assinatura">Renovar</button></div>`;
   return"";
 }
-const FEATURES=["Lançamentos ilimitados de receitas e despesas","Transferências entre contas e contas fixas que se repetem todo mês","Investimentos, dívidas e empréstimos num só lugar","Relatório do mês em PDF e comprovantes anexados","Cartões de crédito com faturas e compras parceladas","Importação de extrato OFX e CSV do seu banco","Orçamentos por categoria e metas de economia","Relatórios, previsão de saldo e comparativo anual","Avisos de contas, faturas e orçamento estourado","Assistente com IA própria que responde e lança gastos por texto","Seus dados guardados na nuvem, em qualquer aparelho"];
+const FEATURES=["Lançamentos ilimitados de receitas e despesas","Transferências entre contas e contas fixas que se repetem todo mês","Orçamento do salário: veja quanto sobra depois das contas","Relatório do mês em PDF e comprovantes anexados","Cartões de crédito com faturas e compras parceladas","Importação de extrato OFX e CSV do seu banco","Orçamentos por categoria e metas de economia","Relatórios, previsão de saldo e comparativo anual","Avisos de contas, faturas e orçamento estourado","Assistente com IA própria que responde e lança gastos por texto","Seus dados guardados na nuvem, em qualquer aparelho"];
 function vAssinatura(){
   const s=subInfo(),pend=myPays.find(p=>p.status==="pending");
   const pm=settings.price_monthly,py=settings.price_yearly,save=r2(pm*12-py);
@@ -1919,16 +1945,14 @@ function brain(q){
       const t=parseTx(q,"out");
       if(t.amount>0&&from&&from.id!==to.id)return{resposta:`Preparei a transferência de **${money(t.amount)}**. Confira e confirme:`,acoes:[{tipo:"transf",from:from.id,to:to.id,amount:t.amount,date:t.date||TODAY}]}}
   }
-  // dívidas
-  if(/\b(devo|devendo|divida\w*|emprestimo\w*|me deve\w*|me devem|quem me deve|deve pra mim|deve para mim|quitar|quitad\w*|financiamento\w*)\b/.test(n)&&!/\b(devo (investir|gastar|economizar|guardar)|quanto devo (gastar|guardar))\b/.test(n)){
-    const D=debtSummary(),act=D.L.filter(x=>!x.c.done);
-    if(!act.length)return{resposta:"Você não tem dívidas nem valores a receber cadastrados. Na aba **Dívidas** você registra empréstimos, carnês e dinheiro que emprestou, e eu te aviso dos vencimentos."};
-    const line=x=>`- ${x.d.person}: faltam ${money(x.c.rest)}, ${x.c.late?"**atrasada** desde":"próxima em"} ${fmtD(x.c.next)} (${money(x.c.nextAmt)})`;
-    const owe=act.filter(x=>x.d.dir==="owe"),owed=act.filter(x=>x.d.dir==="owed");
-    const wantOwed=/\b(me deve\w*|me devem|quem me deve|deve pra mim|deve para mim|receber)\b/.test(n);
-    if(wantOwed)return{resposta:owed.length?`Te devem **${money(D.owed)}** no total:\n${owed.map(line).join("\n")}`:"Ninguém está te devendo no momento."};
-    return{resposta:(owe.length?`Você deve **${money(D.owe)}** no total. Este mês vencem ${money(D.oweMonth)}:\n${owe.map(line).join("\n")}`:"Você não está devendo nada. 🎉")+(owed.length?`\nE te devem ${money(D.owed)}.`:"")};
+  // orçamento do salário
+  if(/\b(salario|sobra\w*|sobrou|comprometid\w*|orcamento do (mes|salario)|meu orcamento|dividas?|devo|devendo|contas do mes)\b/.test(n)&&!/\b(teto|limite de|recebi|gastei|paguei|cartao|cartoes|fatura)\b/.test(n)){
+    const k=TODAY.slice(0,7),M=planMonth(k);
+    if(M.income>0){const pend=M.items.filter(x=>!x.paid);
+      return{resposta:`No orçamento de ${MONTHS[+k.slice(5)-1].toLowerCase()}: salário de **${money(M.income)}**, contas de ${money(M.used)}. ${M.left>=0?`**Sobram ${money(M.left)}**.`:`**Faltam ${money(-M.left)}**: as contas passam do salário.`}${pend.length?`\nAinda a pagar (${money(M.toPay)}):\n${pend.slice(0,6).map(x=>`- ${x.desc}: ${money(x.amount)}`).join("\n")}`:"\nTodas as contas do mês já estão pagas."}`};}
+    if(/\b(salario|orcamento do (mes|salario)|meu orcamento|dividas?)\b/.test(n))return{resposta:"Abra a aba **Orçamento** e coloque seu salário. Depois adicione as contas e dívidas do mês, e eu te digo quanto sobra."};
   }
+
   // investimentos
   const INVW=/\b(invest\w*|aplicad[oa]s?|aplicac\w*|apliquei|aplicar|aporte\w*|aportei|aportar|patrimonio|rendend\w*|rendimento\w*|rendeu|rende|tesouro|cdb|lci|lca|poupanca|acoes|fii|fiis|cripto\w*|bitcoin|selic|cdi)\b/;
   if(INVW.test(n)&&!/\b(cartao|fatura|gastei|paguei|comprei|recebi|ganhei|caiu|entrou)\b/.test(n)){
@@ -2135,10 +2159,7 @@ function computeAlerts(){
     }
     const u=cardUsed(c);if(c.limit>0&&u/c.limit>=.9)A.push({lvl:u>c.limit?"neg":"warn",title:`Cartão ${c.name} com ${Math.round(u/c.limit*100)}% do limite usado`,sub:`Disponível ${money(c.limit-u)}`,go:"cartoes"});
   }
-  for(const d of state.debts||[]){const c=debtCalc(d);if(c.done)continue;
-    if(d.dir==="owe"){if(c.late)A.push({lvl:"neg",title:`Parcela de ${d.person} atrasada`,sub:`Venceu em ${fmtD(c.next)} · ${money(c.nextAmt)}`,go:"dividas",date:c.next});else if(c.next<=in3)A.push({lvl:"warn",title:`Parcela de ${d.person} vence ${c.next===TODAY?"hoje":"em "+fmtD(c.next)}`,sub:money(c.nextAmt),go:"dividas",date:c.next})}
-    else if(c.late)A.push({lvl:"info",title:`${d.person} está te devendo`,sub:`Desde ${fmtD(c.next)} · ${money(c.nextAmt)}`,go:"dividas",date:c.next});
-  }
+  {const M=planMonth(TODAY.slice(0,7));if(M.income>0&&M.left<0)A.push({lvl:"neg",title:"As contas do mês passam do salário",sub:`Faltam ${money(-M.left)} no orçamento`,go:"orcamentos"});else if(M.income>0&&M.left<M.income*.05)A.push({lvl:"warn",title:"Quase todo o salário já está comprometido",sub:`Sobram ${money(M.left)}`,go:"orcamentos"})}
   const k=TODAY.slice(0,7),sp=spentByCat(k);
   for(const [c,l] of Object.entries(state.budgets))if(l>0&&CAT[c]){const s=sp[c]||0,p=s/l;
     if(p>1)A.push({lvl:"neg",title:`Orçamento de ${catOf(c).name} estourado`,sub:`${money(s-l)} acima do limite`,go:"orcamentos",date:TODAY});
@@ -2176,11 +2197,11 @@ function render(){
   $("#nav").innerHTML=VIEWS.filter(v=>locked?v[0]==="assinatura":(v[0]!=="admin"||isAdmin())).map(([id,name])=>`<button data-act="go" data-v="${id}" ${id===view||(view==="importar"&&id==="lancamentos")?'aria-current="page"':""}>${ICON[id]}<span>${name}</span></button>`).join("");
   $("#viewTitle").textContent=viewName(view);
   $("#monthLbl").textContent=`${MONTHS[cur.m]} ${cur.y}`;
-  $("#monthNav").hidden=["contas","metas","investimentos","dividas","admin","importar","relatorios","assinatura"].includes(view);
+  $("#monthNav").hidden=["contas","metas","investimentos","admin","importar","relatorios","assinatura"].includes(view);
   $("#newTxBtn").hidden=locked||["admin","importar","assinatura"].includes(view);$("#bellBtn").hidden=locked;
   $("#banner").innerHTML=auth==="demo"?`<div class="banner"><p><b>Você está numa demonstração.</b> Pode mexer à vontade, nada fica salvo. Crie sua conta para organizar suas finanças de verdade.</p><button class="btn sm primary" data-act="exit-demo">Criar minha conta</button></div>`:famBanner()||subBanner();
   renderBell();renderAI();
-  $("#view").innerHTML=({painel:vPainel,lancamentos:vLanc,cartoes:vCartoes,orcamentos:vOrc,metas:vMetas,investimentos:vInvest,dividas:vDividas,relatorios:vRelatorios,contas:vContas,admin:vAdmin,importar:vImportar,assinatura:vAssinatura})[view]();
+  $("#view").innerHTML=({painel:vPainel,lancamentos:vLanc,cartoes:vCartoes,orcamentos:vOrc,metas:vMetas,investimentos:vInvest,relatorios:vRelatorios,contas:vContas,admin:vAdmin,importar:vImportar,assinatura:vAssinatura})[view]();
 }
 
 function delta(curV,prevV,goodWhenUp){
@@ -2328,16 +2349,115 @@ function cardBlock(c,k){
   </div>`;
 }
 
-function vOrc(){
-  const k=mkey(cur.y,cur.m),sp=spentByCat(k);
-  const tl=CATS.out.reduce((a,[c])=>a+(state.budgets[c]||0),0),ts=CATS.out.reduce((a,[c])=>a+(state.budgets[c]?(sp[c]||0):0),0);
-  return`<div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    <div class="kpi"><span class="lbl">Orçado</span><span class="val num">${money(tl)}</span></div>
-    <div class="kpi"><span class="lbl">Gasto nas categorias orçadas</span><span class="val num">${money(ts)}</span></div>
-    <div class="kpi"><span class="lbl">Disponível</span><span class="val num" style="color:${tl-ts<0?"var(--neg)":"var(--pos)"}">${money(tl-ts)}</span></div></div>
-  <div class="card"><div class="card-h"><h2>Limite mensal por categoria</h2><span class="sub">Digite o limite e saia do campo para salvar. Deixe vazio para não acompanhar. Compras no cartão contam na data da compra.</span></div>
-  <div class="list">${CATS.out.map(([c])=>{const l=state.budgets[c]||0,s=sp[c]||0;return`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div>${l?budgetRow({c,l,s}):`<div class="budget"><div class="top"><span>${catChip(c)}</span><span class="num sub">${money(s)} gasto</span></div></div>`}</div><input class="limit-in num" data-budget="${c}" inputmode="decimal" placeholder="Sem limite" value="${l?String(l).replace(".",","):""}" aria-label="Limite para ${esc(catOf(c).name)}"></div>`}).join("")}</div></div>`;
+/* ---------- Orçamento do salário ---------- */
+const salPlan=()=>{const p=state.plan||(state.plan={});p.income=p.income||[];p.items=p.items||[];p.paid=p.paid||{};p.skip=p.skip||{};if(p.cards===undefined)p.cards=true;return p};
+const planActive=(x,k,p)=>x.fixed?(x.from<=k&&(!x.until||k<x.until)&&!p.skip[k+":"+x.id]):x.month===k;
+function planMonth(k){
+  const p=salPlan();
+  const inc=p.income.filter(x=>planActive(x,k,p));
+  const items=p.items.filter(x=>planActive(x,k,p)).map(x=>({...x,paid:!!p.paid[k+":"+x.id]}));
+  const cards=p.cards?state.cards.map(c=>{const i=invoiceOf(c,k);return i.total>0?{id:"card:"+c.id,card:c.id,desc:`Fatura ${c.name}`,amount:r2(i.total),paid:!!i.paid,auto:true,due:i.due}:null}).filter(Boolean):[];
+  const all=[...cards,...items];
+  const income=r2(inc.reduce((a,x)=>a+x.amount,0)),used=r2(all.reduce((a,x)=>a+x.amount,0)),paid=r2(all.filter(x=>x.paid).reduce((a,x)=>a+x.amount,0));
+  return{inc,items:all,income,used,paid,left:r2(income-used),toPay:r2(used-paid)};
 }
+function planRow(x,M,k){
+  const pc=M.income>0?x.amount/M.income*100:0;
+  const tag=x.auto?`<span class="pl-tag">cartão · vence ${fmtD(x.due)}</span>`:x.fixed?`<span class="pl-tag">todo mês</span>`:"";
+  return`<div class="pl-row ${x.paid?"is-paid":""}">
+    ${x.auto?`<span class="pl-chk ${x.paid?"on":""}" title="${x.paid?"Fatura paga":"Fatura em aberto"}">${x.paid?"✓":""}</span>`:`<button class="pl-chk ${x.paid?"on":""}" data-act="pl-paid" data-id="${x.id}" aria-label="${x.paid?"Desmarcar pago":"Marcar como pago"}: ${esc(x.desc)}">${x.paid?"✓":""}</button>`}
+    <div class="t"><div class="pl-d">${esc(x.desc)}</div><div class="sub">${tag}${tag?" ":""}${pctBR(pc,1)}% do salário${x.paid?" · pago":""}</div></div>
+    <b class="num">${money(x.amount)}</b>
+    <div class="acts">${x.auto?`<button class="icon-btn" data-act="go" data-v="cartoes" aria-label="Ver fatura">${ICON.cartoes}</button>`:`<button class="icon-btn" data-act="pl-edit" data-id="${x.id}" data-kind="items" aria-label="Editar">${ICON.edit}</button>`}</div>
+  </div>`;
+}
+function planBar(M){
+  const base=Math.max(M.income,M.used)||1,seg=(v,cl,t)=>v>0?`<i class="${cl}" style="width:${v/base*100}%" title="${t}: ${money(v)}"></i>`:"";
+  return`<div class="pl-bar" role="img" aria-label="Pago ${money(M.paid)}, a pagar ${money(M.toPay)}, sobra ${money(Math.max(0,M.left))}">${seg(M.paid,"p","Já pago")}${seg(M.toPay,"a","A pagar")}${seg(Math.max(0,M.left),"s","Sobra")}</div>
+  <div class="pl-leg"><span><i class="p"></i>Já pago ${money(M.paid)}</span><span><i class="a"></i>A pagar ${money(M.toPay)}</span><span><i class="s"></i>${M.left>=0?"Sobra "+money(M.left):"Faltam "+money(-M.left)}</span></div>`;
+}
+function planAddForm(kind,ph,fixedDefault,narrow){
+  return`<form class="pl-add ${narrow?"pl-narrow":""}" data-plan="${kind}">
+    <input name="d" placeholder="${ph}" aria-label="Descrição" autocomplete="off" maxlength="60">
+    <input name="v" inputmode="decimal" placeholder="Valor" aria-label="Valor" class="num">
+    <label class="pl-fix"><input type="checkbox" name="f" ${fixedDefault?"checked":""}> Todo mês</label>
+    <button class="btn sm primary">${ICON.plus}Adicionar</button>
+  </form>`;
+}
+function vOrc(){
+  const k=mkey(cur.y,cur.m),M=planMonth(k),p=salPlan(),isNow=k===TODAY.slice(0,7);
+  const daysLeft=isNow?Math.max(1,new Date(cur.y,cur.m+1,0).getDate()-today.getDate()+1):0;
+  let head;
+  if(!M.inc.length&&!M.items.length){
+    head=`<div class="card pl-start"><h2>Quanto você recebe por mês?</h2><p class="sub">Coloque seu salário. Depois vá adicionando as contas, dívidas e parcelas do mês, e o Saldo Certo mostra na hora quanto ainda sobra.</p>
+      <form class="pl-add pl-first" data-plan="income"><input name="d" value="Salário" aria-label="Descrição"><input name="v" inputmode="decimal" placeholder="Ex.: 3.200,00" aria-label="Valor do salário" class="num"><input type="hidden" name="f" value="1"><button class="btn primary">Começar</button></form></div>`;
+  }else{
+    const pc=M.income>0?Math.min(999,M.used/M.income*100):0;
+    head=`<div class="kpis">
+      <div class="kpi"><span class="lbl">Salário e rendas</span><span class="val num">${money(M.income)}</span><span class="sub">${MONTHS[cur.m]} de ${cur.y}</span></div>
+      <div class="kpi"><span class="lbl">Comprometido</span><span class="val num">${money(M.used)}</span><span class="sub">${pctBR(pc,0)}% do salário</span></div>
+      <div class="kpi"><span class="lbl">Ainda a pagar</span><span class="val num">${money(M.toPay)}</span><span class="sub">já pagou ${money(M.paid)}</span></div>
+      <div class="kpi hero ${M.left<0?"neg":""}"><span class="lbl">${M.left>=0?"Sobra":"Falta"}</span><span class="val num" style="color:${M.left<0?"var(--neg)":"var(--pos)"}">${money(Math.abs(M.left))}</span><span class="sub">${M.left<0?"as contas passam do salário":isNow?`cerca de ${money(M.left/daysLeft)} por dia até o fim do mês`:"depois de todas as contas"}</span></div></div>
+    <div class="card">${planBar(M)}</div>
+    <div class="grid">
+      <div class="card span-8"><div class="card-h"><h2>Para onde vai o salário</h2><span class="sub">${M.items.length} ${M.items.length===1?"conta":"contas"}</span></div>
+        ${planAddForm("items","Ex.: Aluguel, empréstimo, parcela do celular",false)}
+        <div class="list pl-list">${M.items.length?M.items.map(x=>planRow(x,M,k)).join(""):`<div class="empty">Adicione as contas e dívidas deste mês. Marque "Todo mês" nas que se repetem, como aluguel.</div>`}</div>
+        ${state.cards.length?`<label class="pl-fix pl-cards"><input type="checkbox" data-act="pl-cards" ${p.cards?"checked":""}> Incluir as faturas dos cartões automaticamente</label>`:""}
+      </div>
+      <div class="card span-4"><div class="card-h"><h2>Renda do mês</h2></div>
+        <div class="list">${M.inc.map(x=>`<div class="pl-row pl-inc"><div class="t"><div class="pl-d">${esc(x.desc)}</div><div class="sub">${x.fixed?"todo mês":"só neste mês"}</div></div><b class="num in">${money(x.amount)}</b><div class="acts"><button class="icon-btn" data-act="pl-edit" data-id="${x.id}" data-kind="income" aria-label="Editar">${ICON.edit}</button></div></div>`).join("")||`<div class="empty">Sem renda neste mês.</div>`}</div>
+        ${planAddForm("income","Ex.: Salário, extra, 13º",true,true)}
+      </div>
+    </div>`;
+  }
+  const sp=spentByCat(k),tl=CATS.out.reduce((a,[c])=>a+(state.budgets[c]||0),0),ts=CATS.out.reduce((a,[c])=>a+(state.budgets[c]?(sp[c]||0):0),0);
+  return`${head}
+  <details class="card pl-limits" ${tl?"open":""}><summary><h2>Limites de gasto por categoria</h2><span class="sub">${tl?`${money(ts)} de ${money(tl)} usados`:"opcional"}</span></summary>
+  <p class="sub" style="margin:0 0 8px">Digite o limite e saia do campo para salvar. Deixe vazio para não acompanhar. Compras no cartão contam na data da compra.</p>
+  <div class="list">${CATS.out.map(([c])=>{const l=state.budgets[c]||0,s=sp[c]||0;return`<div class="row" style="grid-template-columns:minmax(0,1fr) auto"><div>${l?budgetRow({c,l,s}):`<div class="budget"><div class="top"><span>${catChip(c)}</span><span class="num sub">${money(s)} gasto</span></div></div>`}</div><input class="limit-in num" data-budget="${c}" inputmode="decimal" placeholder="Sem limite" value="${l?String(l).replace(".",","):""}" aria-label="Limite para ${esc(catOf(c).name)}"></div>`}).join("")}</div></details>`;
+}
+function planAdd(f){
+  const kind=f.dataset.plan,d=f.elements.d.value.trim(),v=parseMoney(f.elements.v.value),fx=f.elements.f.type==="hidden"?true:f.elements.f.checked,k=mkey(cur.y,cur.m);
+  if(!d){f.elements.d.focus();return toast("Escreva o que é, por exemplo: Aluguel.")}
+  if(!(v>0)){f.elements.v.focus();return toast("Digite o valor.")}
+  const x={id:uid(),desc:d.slice(0,60),amount:r2(v),fixed:fx};if(fx)x.from=k;else x.month=k;
+  salPlan()[kind].push(x);
+  commit(kind==="income"?`${d} de ${money(v)} adicionado`:`${d} adicionado. ${(()=>{const M=planMonth(k);return M.left>=0?"Sobra "+money(M.left):"Falta "+money(-M.left)})()}`);
+  setTimeout(()=>{const n=document.querySelector(`.pl-add[data-plan="${kind}"] input[name=d]`);if(n&&!n.value)n.focus()},50);
+}
+let planEditing=null;
+function planEditForm(kind,id){
+  const p=salPlan(),x=p[kind].find(y=>y.id===id);if(!x)return;planEditing={kind,id};const k=mkey(cur.y,cur.m);
+  openModal(kind==="income"?"Editar renda":"Editar conta",`<form id="planForm" class="mform">
+    <div class="field"><label for="pl-d">Descrição</label><input id="pl-d" value="${esc(x.desc)}" maxlength="60"></div>
+    <div class="field"><label for="pl-v">Valor (R$)</label><input id="pl-v" class="big" inputmode="decimal" value="${String(x.amount).replace(".",",")}"></div>
+    ${x.fixed?`<fieldset class="pl-scope"><legend class="sub">Esta conta se repete todo mês. Aplicar a mudança:</legend>
+      <label><input type="radio" name="pl-sc" value="on" checked> De ${MONTHS[cur.m].toLowerCase()} em diante</label>
+      <label><input type="radio" name="pl-sc" value="one"> Só em ${MONTHS[cur.m].toLowerCase()}</label></fieldset>`:`<label class="pl-fix"><input type="checkbox" id="pl-fx"> Repetir todo mês a partir de ${MONTHS[cur.m].toLowerCase()}</label>`}
+    <p class="form-err" id="plErr" hidden></p>
+    <div class="mfoot">${x.fixed?`<button type="button" class="btn danger" data-act="pl-del" data-mode="one" style="margin-right:auto">Remover deste mês</button><button type="button" class="btn danger" data-act="pl-del" data-mode="on">Remover daqui em diante</button>`:`<button type="button" class="btn danger" data-act="pl-del" data-mode="all" style="margin-right:auto">Remover</button>`}<button class="btn primary">Salvar</button></div>
+  </form>`);
+}
+function planSave(){
+  const {kind,id}=planEditing,p=salPlan(),x=p[kind].find(y=>y.id===id),k=mkey(cur.y,cur.m);if(!x)return closeModal();
+  const d=$("#pl-d").value.trim(),v=parseMoney($("#pl-v").value);
+  if(!d||!(v>0)){$("#plErr").textContent="Preencha a descrição e um valor maior que zero.";$("#plErr").hidden=false;return}
+  if(x.fixed){
+    const sc=(document.querySelector('input[name="pl-sc"]:checked')||{}).value;
+    if(sc==="one"){p.skip[k+":"+x.id]=true;const n={id:uid(),desc:d,amount:r2(v),fixed:false,month:k};p[kind].push(n);if(p.paid[k+":"+x.id]){p.paid[k+":"+n.id]=true}}
+    else if(x.from===k){x.desc=d;x.amount=r2(v)}
+    else{x.until=k;const n={id:uid(),desc:d,amount:r2(v),fixed:true,from:k};p[kind].push(n);for(const key of Object.keys(p.paid))if(key.endsWith(":"+x.id)&&key.slice(0,7)>=k){p.paid[key.slice(0,7)+":"+n.id]=true}}
+  }else{x.desc=d;x.amount=r2(v);if($("#pl-fx")&&$("#pl-fx").checked){x.fixed=true;x.from=k;delete x.month}}
+  closeModal();commit("Atualizado");
+}
+function planDel(mode){
+  const {kind,id}=planEditing,p=salPlan(),k=mkey(cur.y,cur.m);
+  if(mode==="one")p.skip[k+":"+id]=true;
+  else{const x=p[kind].find(y=>y.id===id);if(x&&mode==="on"&&x.from<k)x.until=k;else p[kind]=p[kind].filter(y=>y.id!==id)}
+  closeModal();commit("Removido");
+}
+
 
 function vMetas(){
   const now=new Date(today.getFullYear(),today.getMonth(),1);
@@ -3367,6 +3487,10 @@ document.addEventListener("click",e=>{
     case"del-acc":state.accounts=state.accounts.filter(x=>x.id!==id);commit("Conta removida");break;
     case"card-new":cardForm();break;
     case"card-edit":cardForm(cardOf(b.dataset.card));break;
+    case"pl-paid":{const p=salPlan(),key=mkey(cur.y,cur.m)+":"+id;if(p.paid[key])delete p.paid[key];else p.paid[key]=true;commit();break}
+    case"pl-edit":planEditForm(b.dataset.kind,id);break;
+    case"pl-del":planDel(b.dataset.mode);break;
+    case"pl-cards":salPlan().cards=b.checked;commit(b.checked?"Faturas incluídas no orçamento":"Faturas fora do orçamento");break;
     case"stuck-retry":location.reload();break;
     case"stuck-relogin":clearAuthStorage();try{sb&&withTO(sb.auth.signOut({scope:"local"}),3000,"sair").catch(()=>{}).finally(()=>location.reload())}catch(e){location.reload()}break;
     case"del-series":{const t=state.txs.find(x=>x.id===id);if(!t){closeModal();break}const L=seriesOf(t),mode=b.dataset.mode,ids=mode==="all"?L.map(x=>x.id):mode==="next"?L.slice(L.indexOf(t)).map(x=>x.id):[t.id];removeTxs(ids);closeModal();commit(ids.length>1?`${ids.length} parcelas apagadas`:"Parcela apagada");break}
@@ -3467,6 +3591,8 @@ document.addEventListener("submit",e=>{
   if(f.id==="loginForm"){e.preventDefault();doLogin();return}
   if(f.id==="pwForm"){e.preventDefault();changePassword();return}
   if(f.id==="cardForm"){e.preventDefault();saveCard();return}
+  if(f.classList.contains("pl-add")){e.preventDefault();planAdd(f);return}
+  if(f.id==="planForm"){e.preventDefault();planSave();return}
   if(f.id==="invClearForm"){e.preventDefault();invClear(f);return}
   if(f.id==="cardDelForm"){e.preventDefault();cardDelete(f.dataset.card);return}
   if(f.id==="invForm"){e.preventDefault();saveInv();return}
