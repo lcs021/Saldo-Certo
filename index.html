@@ -76,6 +76,9 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .btn.sm{padding:5px 10px;font-size:13px}
 .btn.ghost{border-color:transparent;background:none}
 .btn.danger{color:var(--neg)}
+.link-btn{background:none;border:0;padding:0;font:inherit;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.del-opts{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.del-opts .btn{justify-content:center;width:100%}
 .cc-btns{display:flex;gap:6px;flex-wrap:wrap}
 .cd-warn{background:var(--neg-soft);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.45}
 .cd-warn b{color:var(--neg)}
@@ -1580,7 +1583,7 @@ function showWiz(err){
     <p class="sub" style="margin:0">Pode deixar em branco e ajustar depois em Ajustes. Para mais contas, use Ajustes também.</p>`;
   if(s===2)body=`<p class="wz-lead">Você usa cartão de crédito?</p>
     <div class="seg" role="group" aria-label="Usa cartão"><button type="button" data-act="wz-card" data-v="1" aria-pressed="${wiz.hasCard}">Sim, uso</button><button type="button" data-act="wz-card" data-v="0" aria-pressed="${!wiz.hasCard}">Não uso</button></div>
-    ${wiz.hasCard?`<div class="two"><div class="field"><label for="wz-cname">Nome do cartão</label><input id="wz-cname" value="${esc(wiz.card.name)}" placeholder="Ex.: Nubank"></div><div class="field"><label for="wz-climit">Limite (R$)</label><input id="wz-climit" inputmode="decimal" value="${esc(wiz.card.limit)}" placeholder="5.000,00"></div></div>
+    ${wiz.hasCard?`<div class="two"><div class="field"><label for="wz-cname">Nome do cartão</label><input id="wz-cname" value="${esc(wiz.card.name)}" placeholder="Ex.: Nubank"></div><div class="field"><label for="wz-climit">Limite (R$, opcional)</label><input id="wz-climit" inputmode="decimal" value="${esc(wiz.card.limit)}" placeholder="5.000,00"></div></div>
     <div class="two"><div class="field"><label for="wz-cclose">Dia do fechamento</label><input id="wz-cclose" type="number" min="1" max="31" value="${wiz.card.close}"></div><div class="field"><label for="wz-cdue">Dia do vencimento</label><input id="wz-cdue" type="number" min="1" max="31" value="${wiz.card.due}"></div></div>
     <p class="sub" style="margin:0">Os dias aparecem na fatura do cartão ou no app do banco. Assim cada compra cai na fatura certa.</p>`:`<p class="sub" style="margin:0">Sem problema. Se começar a usar, é só cadastrar na aba Cartões.</p>`}`;
   if(s===3)body=`<p class="wz-lead">Quanto você recebe por mês?</p>
@@ -1591,7 +1594,7 @@ function showWiz(err){
 }
 function wizNext(){
   wizSave();
-  if(wiz.step===2&&wiz.hasCard){const c=wiz.card;if(!c.name)return showWiz("Dê um nome para o cartão.");if(!(parseMoney(c.limit)>0))return showWiz("Informe o limite do cartão.")}
+  if(wiz.step===2&&wiz.hasCard){const c=wiz.card;if(!c.name)return showWiz("Dê um nome para o cartão.");if(String(c.limit).trim()&&!(parseMoney(c.limit)>=0))return showWiz("O limite deve ser um número, ou deixe vazio.")}
   if(wiz.step<3){wiz.step++;return showWiz()}
   finishWizard();
 }
@@ -1600,7 +1603,7 @@ function finishWizard(){
   const bal=parseMoney(w.bal),cash=parseMoney(w.cash);
   if(a[0]){a[0].name=w.acc;if(isFinite(bal))a[0].initial=r2(bal)}else state.accounts.push({id:"cc",name:w.acc,initial:isFinite(bal)?r2(bal):0});
   const cart=state.accounts.find(x=>x.id==="cart");if(cart&&isFinite(cash))cart.initial=r2(cash);
-  if(w.hasCard)state.cards.push({id:uid(),name:w.card.name,limit:r2(parseMoney(w.card.limit)),closeDay:Math.min(31,Math.max(1,w.card.close)),dueDay:Math.min(31,Math.max(1,w.card.due)),color:CARD_COLORS[0][0]});
+  if(w.hasCard)state.cards.push({id:uid(),name:w.card.name,limit:String(w.card.limit).trim()?r2(parseMoney(w.card.limit))||0:0,closeDay:Math.min(31,Math.max(1,w.card.close)),dueDay:Math.min(31,Math.max(1,w.card.due)),color:CARD_COLORS[0][0]});
   const inc=parseMoney(w.income);
   if(inc>0){const d=Math.min(31,Math.max(1,w.day));let [y,m]=TODAY.split("-").map(Number);m-=1;
     const mk=(yy,mm)=>{const x=new Date(yy,mm,1),dim=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(Math.min(d,dim))}`};
@@ -1965,7 +1968,7 @@ function brain(q){
   // cartão / fatura
   if(/\b(fatura|cartao|cartoes|limite do cartao|limite disponivel)\b/.test(n)){
     if(!state.cards.length)return{resposta:"Você ainda não cadastrou cartões. Vá em **Cartões > Adicionar cartão**."};
-    return{resposta:state.cards.map(c=>{const i=invoiceOf(c,invKey(TODAY,c)),u=cardUsed(c);return`**${c.name}**: fatura de ${money(i.total)}, ${i.paid?"já paga":"vence em "+fmtD(i.due)}. Limite disponível ${money(c.limit-u)} de ${money(c.limit)}.`}).join("\n")}}
+    return{resposta:state.cards.map(c=>{const i=invoiceOf(c,invKey(TODAY,c)),u=cardUsed(c);return`**${c.name}**: fatura de ${money(i.total)}, ${i.paid?"já paga":"vence em "+fmtD(i.due)}. ${c.limit>0?`Limite disponível ${money(c.limit-u)} de ${money(c.limit)}.`:`Sem limite cadastrado, ${money(u)} em uso.`}`}).join("\n")}}
   // metas
   if(/\b(meta|metas|objetivo|guardar|reserva|juntar)\b/.test(n)){
     if(!state.goals.length)return{resposta:"Você ainda não tem metas. Crie uma em **Metas**, como uma reserva de emergência."};
@@ -2205,7 +2208,7 @@ function vPainel(){
   const bud=Object.entries(state.budgets).filter(([c,l])=>l>0&&CAT[c]).map(([c,l])=>({c,l,s:sp[c]||0})).sort((a,b)=>b.s/b.l-a.s/a.l).slice(0,5);
   const budCard=`<div class="card span-6"><div class="card-h"><h2>Orçamentos do mês</h2><button class="btn sm ghost" data-act="go" data-v="orcamentos">Ajustar</button></div>${bud.length?bud.map(budgetRow).join(""):`<div class="empty">Defina limites por categoria em Orçamentos.</div>`}</div>`;
 
-  const cardsCard=state.cards.length?`<div class="card span-6"><div class="card-h"><h2>Cartões</h2><button class="btn sm ghost" data-act="go" data-v="cartoes">Ver faturas</button></div><div class="list">${state.cards.map(c=>{const i=invoiceOf(c,k===TODAY.slice(0,7)?invKey(TODAY,c):k),u=cardUsed(c),pc=c.limit?Math.min(100,u/c.limit*100):0;return`<div class="row" style="grid-template-columns:auto 1fr auto"><span class="cc-dot" style="background:${esc(c.color)}"></span><div class="t"><div>${esc(c.name)} ${pill(invStatus(i))}</div><div class="bar ${pc>=90?"over":pc>=70?"warn":""}" style="margin-top:6px"><i style="width:${pc}%"></i></div><div class="sub">Usado ${money(u)} de ${money(c.limit)}</div></div><div style="text-align:right"><div class="num" style="font-weight:600">${money(i.total)}</div><div class="sub">vence ${fmtD(i.due)}</div></div></div>`}).join("")}</div></div>`:"";
+  const cardsCard=state.cards.length?`<div class="card span-6"><div class="card-h"><h2>Cartões</h2><button class="btn sm ghost" data-act="go" data-v="cartoes">Ver faturas</button></div><div class="list">${state.cards.map(c=>{const i=invoiceOf(c,k===TODAY.slice(0,7)?invKey(TODAY,c):k),u=cardUsed(c),pc=c.limit?Math.min(100,u/c.limit*100):0;return`<div class="row" style="grid-template-columns:auto 1fr auto"><span class="cc-dot" style="background:${esc(c.color)}"></span><div class="t"><div>${esc(c.name)} ${pill(invStatus(i))}</div>${c.limit>0?`<div class="bar ${pc>=90?"over":pc>=70?"warn":""}" style="margin-top:6px"><i style="width:${pc}%"></i></div><div class="sub">Usado ${money(u)} de ${money(c.limit)}</div>`:`<div class="sub">Usado ${money(u)} · sem limite cadastrado</div>`}</div><div style="text-align:right"><div class="num" style="font-weight:600">${money(i.total)}</div><div class="sub">vence ${fmtD(i.due)}</div></div></div>`}).join("")}</div></div>`:"";
 
   const goalsCard=state.goals.length?`<div class="card ${cardsCard?"span-6":"span-12"}"><div class="card-h"><h2>Metas</h2><button class="btn sm ghost" data-act="go" data-v="metas">Ver todas</button></div><div class="goals">${state.goals.slice(0,3).map(g=>{const pc=Math.min(100,g.saved/g.target*100);return`<div class="goal"><div class="budget"><div class="top"><span>${esc(g.name)}</span><span class="num">${pc.toFixed(0)}%</span></div><div class="bar"><i style="width:${pc}%"></i></div><div class="sub num">${money(g.saved)} de ${money(g.target)}</div></div></div>`}).join("")}</div></div>`:"";
 
@@ -2298,8 +2301,8 @@ function cardBlock(c,k){
   const pay=i.payments[0];
   return`<div class="card cc-block">
     <div class="cc-side">
-      <div class="cc-visual" style="--cc:${esc(c.color)}"><span>${esc(c.name)}</span><b class="num">${money(c.limit-u)}</b><small>limite disponível</small></div>
-      <div class="budget"><div class="top"><span>Limite usado</span><span class="num">${pc.toFixed(0)}%</span></div><div class="bar ${pc>=90?"over":pc>=70?"warn":""}"><i style="width:${pc}%"></i></div><div class="sub num">${money(u)} de ${money(c.limit)}</div></div>
+      <div class="cc-visual" style="--cc:${esc(c.color)}"><span>${esc(c.name)}</span><b class="num">${money(c.limit>0?c.limit-u:u)}</b><small>${c.limit>0?"limite disponível":"em uso · sem limite"}</small></div>
+      ${c.limit>0?`<div class="budget"><div class="top"><span>Limite usado</span><span class="num">${pc.toFixed(0)}%</span></div><div class="bar ${pc>=90?"over":pc>=70?"warn":""}"><i style="width:${pc}%"></i></div><div class="sub num">${money(u)} de ${money(c.limit)}</div></div>`:`<div class="sub">Sem limite cadastrado. <button class="link-btn" data-act="card-edit" data-card="${c.id}">Adicionar limite</button></div>`}
       <div class="sub">Fecha dia ${c.closeDay} · vence dia ${c.dueDay}</div>
       <div class="cc-btns"><button class="btn sm" data-act="card-edit" data-card="${c.id}">${ICON.edit}Editar cartão</button><button class="btn sm ghost danger" data-act="card-del-ask" data-card="${c.id}">${ICON.trash}Excluir</button></div>
     </div>
@@ -2308,6 +2311,7 @@ function cardBlock(c,k){
       <div class="inv-sum"><div><span class="lbl-s">Total</span><b class="num">${money(i.total)}</b></div><div><span class="lbl-s">Fecha em</span><b class="num">${fmtD(i.close)}</b></div><div><span class="lbl-s">Vence em</span><b class="num">${fmtD(i.due)}</b></div></div>
       ${i.paid?`<p class="note">Paga em ${fmtD(pay.date)} com ${esc(accName(pay.acc)||"conta")} · ${money(i.paidAmt)}. Para desfazer, exclua o pagamento em Lançamentos.</p>`:i.total>0?`<button class="btn primary" style="align-self:flex-start" data-act="pay-inv" data-card="${c.id}" data-key="${k}">Pagar fatura</button>`:""}
       <div class="list">${txs.length?txs.map(t=>`<div class="row" style="grid-template-columns:auto 1fr auto auto"><span class="num sub">${fmtD(t.date)}</span><div class="t"><div>${esc(t.desc)}</div><div class="sub">${esc(catOf(t.cat).name)}</div></div><span class="num ${t.type}">${t.type==="in"?"+ ":""}${money(t.amount)}</span><div class="acts"><button class="icon-btn" data-act="edit-tx" data-id="${t.id}" aria-label="Editar">${ICON.edit}</button><button class="icon-btn" data-act="del-tx" data-id="${t.id}" aria-label="Excluir">${ICON.trash}</button></div></div>`).join(""):`<div class="empty">Nenhuma compra nesta fatura.</div>`}</div>
+      ${txs.length?`<button class="btn sm ghost danger" style="align-self:flex-start" data-act="inv-clear" data-card="${c.id}" data-key="${k}">${ICON.trash}Apagar compras desta fatura</button>`:""}
     </div>
   </div>`;
 }
@@ -3176,11 +3180,12 @@ function saveTxCore(){
     closeDrawer();commit(`Conta fixa criada: repete todo dia ${r.day}`);return}
   const n=Math.max(1,Math.min(48,parseInt($("#f-repeat").value)||1));const[y,m,d]=date.split("-").map(Number);
   const inst=kind==="c"&&txType==="out"&&n>1,per=inst?Math.floor(amount/n*100)/100:amount;
+  const grp=n>1?uid():null;
   for(let i=0;i<n;i++){
     const dt=new Date(y,m-1+i,1),dim=new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate();
     const ds=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(Math.min(d,dim))}`;
     const val=inst?(i===n-1?r2(amount-per*(n-1)):per):r2(amount);
-    state.txs.push({...base,id:uid(),amount:val,date:ds,desc:n>1?`${desc} (${i+1}/${n})`:desc,paid:kind==="c"?true:(i===0?base.paid:false)});
+    state.txs.push({...base,id:uid(),amount:val,date:ds,...(grp?{grp}:{}),desc:n>1?`${desc} (${i+1}/${n})`:desc,paid:kind==="c"?true:(i===0?base.paid:false)});
   }
   closeDrawer();commit(inst?`Compra em ${n}x de ${money(per)} registrada`:n>1?`${n} lançamentos criados`:"Lançamento salvo");
 }
@@ -3194,7 +3199,7 @@ function cardForm(c){
   const hasTx=c&&state.txs.some(t=>t.card===c.id);
   openModal(c?"Editar cartão":"Novo cartão de crédito",`<form id="cardForm" class="mform">
     <div class="field"><label for="cd-name">Nome do cartão</label><input id="cd-name" value="${esc(c?c.name:"")}" placeholder="Ex.: Nubank, Itaú Click"></div>
-    <div class="field"><label for="cd-limit">Limite (R$)</label><input id="cd-limit" inputmode="decimal" value="${c?String(c.limit).replace(".",","):""}" placeholder="5.000,00"></div>
+    <div class="field"><label for="cd-limit">Limite (R$, opcional)</label><input id="cd-limit" inputmode="decimal" value="${c&&c.limit>0?String(c.limit).replace(".",","):""}" placeholder="Deixe vazio se não quiser"></div>
     <div class="two"><div class="field"><label for="cd-close">Dia do fechamento</label><input id="cd-close" type="number" min="1" max="31" value="${c?c.closeDay:3}"></div><div class="field"><label for="cd-due">Dia do vencimento</label><input id="cd-due" type="number" min="1" max="31" value="${c?c.dueDay:10}"></div></div>
     <div class="field"><label>Cor</label><div class="swatches">${CARD_COLORS.map(([hex,n],i)=>`<label class="sw" title="${n}"><input type="radio" name="cd-color" value="${hex}" ${(c?c.color===hex:i===0)?"checked":""}><span style="background:${hex}"></span></label>`).join("")}</div></div>
     <p class="form-err" id="cdErr" hidden></p>
@@ -3227,10 +3232,11 @@ function saveCard(){
   const name=$("#cd-name").value.trim(),limit=parseMoney($("#cd-limit").value),close=parseInt($("#cd-close").value),due=parseInt($("#cd-due").value),color=(document.querySelector('input[name="cd-color"]:checked')||{}).value||CARD_COLORS[0][0];
   const e=m=>{$("#cdErr").textContent=m;$("#cdErr").hidden=false};
   if(!name)return e("Dê um nome para o cartão.");
-  if(!(limit>0))return e("Informe o limite do cartão.");
+  const limTxt=$("#cd-limit").value.trim();
+  if(limTxt&&!(limit>=0))return e("O limite deve ser um número, por exemplo 5.000,00. Para ficar sem limite, apague o campo.");
   if(!(close>=1&&close<=31)||!(due>=1&&due<=31))return e("Os dias de fechamento e vencimento vão de 1 a 31.");
-  if(editingCard){Object.assign(editingCard,{name,limit:r2(limit),closeDay:close,dueDay:due,color});closeModal();commit("Cartão atualizado")}
-  else{state.cards.push({id:uid(),name,limit:r2(limit),closeDay:close,dueDay:due,color});closeModal();commit("Cartão adicionado")}
+  if(editingCard){Object.assign(editingCard,{name,limit:limTxt?r2(limit):0,closeDay:close,dueDay:due,color});closeModal();commit("Cartão atualizado")}
+  else{state.cards.push({id:uid(),name,limit:limTxt?r2(limit):0,closeDay:close,dueDay:due,color});closeModal();commit("Cartão adicionado")}
 }
 let payingInv=null;
 function payInvForm(cardId,key){
@@ -3252,6 +3258,55 @@ function savePayInv(){
 
 /* ---------- Ações ---------- */
 let pendingDel=null;
+/* séries de parcelas: mesma compra em várias faturas */
+const PARC_RE=/^(.*) \((\d+)\/(\d+)\)$/;
+function seriesOf(t){
+  if(!t)return[];
+  const pm=t.desc.match(PARC_RE);
+  let L;
+  if(t.grp)L=state.txs.filter(x=>x.grp===t.grp);
+  else if(pm){const base=pm[1],n=pm[3];L=state.txs.filter(x=>{if(x.type!==t.type||(x.card||null)!==(t.card||null)||(x.acc||null)!==(t.acc||null)||x.recId)return false;const q=x.desc.match(PARC_RE);return q&&q[1]===base&&q[3]===n&&Math.abs(x.amount-t.amount)<=Math.max(.5,t.amount*.02)})}
+  else return[t];
+  const num=x=>{const q=x.desc.match(PARC_RE);return q?+q[2]:0};
+  return L.sort((a,b)=>num(a)-num(b)||a.date.localeCompare(b.date));
+}
+function removeTxs(ids){
+  const set=new Set(ids);
+  for(const t of state.txs)if(set.has(t.id)&&t.att&&typeof removeAtt==="function")removeAtt(t.att);
+  state.txs=state.txs.filter(t=>!set.has(t.id));
+}
+function delSeriesAsk(t){
+  const L=seriesOf(t),i=L.indexOf(t),next=L.slice(i),pm=t.desc.match(PARC_RE),base=pm?pm[1]:t.desc;
+  const tot=L.reduce((a,x)=>a+x.amount,0);
+  openModal("Apagar compra parcelada",`<div class="mform">
+    <p style="margin:0"><b>${esc(base)}</b> está em ${L.length} parcelas de ${money(t.amount)}, somando ${money(tot)}.</p>
+    <p class="sub" style="margin:0">Você está na parcela ${pm?pm[2]:i+1} de ${pm?pm[3]:L.length}, com data em ${fmtD(t.date)}. O que deseja apagar?</p>
+    <div class="del-opts">
+      <button class="btn danger-solid" data-act="del-series" data-id="${t.id}" data-mode="all">Apagar a compra inteira (${L.length} parcelas)</button>
+      ${next.length>1&&next.length<L.length?`<button class="btn danger" data-act="del-series" data-id="${t.id}" data-mode="next">Apagar esta e as próximas (${next.length} parcelas)</button>`:""}
+      <button class="btn danger" data-act="del-series" data-id="${t.id}" data-mode="one">Apagar só esta parcela</button>
+      <button class="btn" data-act="close-modal">Cancelar</button>
+    </div></div>`);
+}
+function invClearAsk(c,k){
+  const i=invoiceOf(c,k),tx=i.txs;if(!tx.length)return;
+  const others=new Set();for(const t of tx)for(const x of seriesOf(t))if(!tx.includes(x))others.add(x.id);
+  openModal("Apagar compras da fatura",`<form id="invClearForm" class="mform" data-card="${c.id}" data-key="${k}">
+    <div class="cd-warn"><b>${tx.length} ${tx.length===1?"compra será apagada":"compras serão apagadas"}</b> da fatura de ${MONTHS[+k.slice(5)-1]} do ${esc(c.name)}, somando ${money(i.total)}.</div>
+    ${others.size?`<label class="cd-check"><input type="checkbox" id="icAll" checked> Apagar também as outras ${others.size} parcelas dessas compras, que estão em outras faturas</label>`:""}
+    ${i.payments.length?`<p class="sub" style="margin:0">O pagamento desta fatura continua em Lançamentos. Se quiser desfazer, apague por lá.</p>`:""}
+    <label class="cd-check"><input type="checkbox" id="icConfirm"> Entendo que isso não pode ser desfeito</label>
+    <p class="form-err" id="icErr" hidden></p>
+    <div class="mfoot"><button type="button" class="btn" data-act="close-modal">Cancelar</button><button class="btn danger-solid">Apagar compras</button></div>
+  </form>`);
+}
+function invClear(f){
+  if(!$("#icConfirm").checked){$("#icErr").textContent="Marque a confirmação para apagar.";$("#icErr").hidden=false;return}
+  const c=cardOf(f.dataset.card);if(!c)return closeModal();
+  const tx=invoiceOf(c,f.dataset.key).txs,ids=new Set(tx.map(t=>t.id));
+  if($("#icAll")&&$("#icAll").checked)for(const t of tx)for(const x of seriesOf(t))ids.add(x.id);
+  removeTxs([...ids]);closeModal();commit(`${ids.size} ${ids.size===1?"compra apagada":"compras apagadas"}`);
+}
 function confirmDel(b,id,act){pendingDel=id;b.outerHTML=`<button class="confirm-del" data-act="${act}" data-id="${id}">Excluir?</button>`;setTimeout(()=>{if(pendingDel===id){pendingDel=null;render()}},3500)}
 document.addEventListener("click",e=>{
   if(alertsOpen&&!e.target.closest("#alertPop")&&!e.target.closest("#bellBtn")){alertsOpen=false;renderBell()}
@@ -3269,7 +3324,7 @@ document.addEventListener("click",e=>{
     case"edit-tx":if(tx)openDrawer(tx);break;
     case"mark-paid":if(tx){tx.paid=true;commit("Marcado como pago")}break;
     case"toggle-paid":if(tx){tx.paid=!tx.paid;if(tx.tr)for(const t of state.txs)if(t.tr===tx.tr)t.paid=tx.paid;commit(tx.paid?"Marcado como pago":"Marcado como pendente")}break;
-    case"del-tx":if(pendingDel===id){const g=tx&&tx.tr;if(tx&&tx.att)removeAtt(tx.att);state.txs=state.txs.filter(t=>t.id!==id&&!(g&&t.tr===g));pendingDel=null;commit("Lançamento excluído")}else confirmDel(b,id,"del-tx");break;
+    case"del-tx":if(tx&&!tx.tr&&seriesOf(tx).length>1){pendingDel=null;delSeriesAsk(tx);break}if(pendingDel===id){const g=tx&&tx.tr;if(tx&&tx.att)removeAtt(tx.att);state.txs=state.txs.filter(t=>t.id!==id&&!(g&&t.tr===g));pendingDel=null;commit("Lançamento excluído")}else confirmDel(b,id,"del-tx");break;
     case"inv-new":if(!locked)invForm();break;
     case"inv-edit":{const v=state.invs.find(x=>x.id===id);if(v)invForm(v);break}
     case"inv-open":{const v=state.invs.find(x=>x.id===id);if(v)invDetail(v);break}
@@ -3300,6 +3355,8 @@ document.addEventListener("click",e=>{
     case"del-acc":state.accounts=state.accounts.filter(x=>x.id!==id);commit("Conta removida");break;
     case"card-new":cardForm();break;
     case"card-edit":cardForm(cardOf(b.dataset.card));break;
+    case"del-series":{const t=state.txs.find(x=>x.id===id);if(!t){closeModal();break}const L=seriesOf(t),mode=b.dataset.mode,ids=mode==="all"?L.map(x=>x.id):mode==="next"?L.slice(L.indexOf(t)).map(x=>x.id):[t.id];removeTxs(ids);closeModal();commit(ids.length>1?`${ids.length} parcelas apagadas`:"Parcela apagada");break}
+    case"inv-clear":{const c=cardOf(b.dataset.card);if(c)invClearAsk(c,b.dataset.key);break}
     case"card-del-ask":{const c=cardOf(b.dataset.card);if(c)cardDelAsk(c);break}
     case"pay-inv":payInvForm(b.dataset.card,b.dataset.key);break;
     case"alerts-toggle":alertsOpen=!alertsOpen;renderBell();break;
@@ -3396,6 +3453,7 @@ document.addEventListener("submit",e=>{
   if(f.id==="loginForm"){e.preventDefault();doLogin();return}
   if(f.id==="pwForm"){e.preventDefault();changePassword();return}
   if(f.id==="cardForm"){e.preventDefault();saveCard();return}
+  if(f.id==="invClearForm"){e.preventDefault();invClear(f);return}
   if(f.id==="cardDelForm"){e.preventDefault();cardDelete(f.dataset.card);return}
   if(f.id==="invForm"){e.preventDefault();saveInv();return}
   if(f.id==="debtForm"){e.preventDefault();saveDebt();return}
